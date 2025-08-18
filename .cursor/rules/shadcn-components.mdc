@@ -1,0 +1,341 @@
+---
+alwaysApply: true
+---
+
+# shadcn/ui Component Rules
+
+This project uses shadcn/ui components with the "New York" style, RSC support, and TypeScript. Follow these conventions for consistency.
+
+## Component Structure
+
+### UI Components Location
+
+- **Base Components**: `@/components/ui/` - Core shadcn/ui components
+- **Custom Components**: `@/components/` - Project-specific components
+- **Utility Functions**: [lib/utils.ts](mdc:lib/utils.ts) - cn() function and helpers
+
+### Import Patterns
+
+```typescript
+// ✅ Good: Import shadcn/ui components
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
+// ✅ Good: Import custom components
+import { Header } from '@/components/header';
+import { UserProfile } from '@/components/user-profile';
+```
+
+## Styling with cn() Function
+
+### Always Use cn() for Class Merging
+
+```typescript
+// ✅ Good: Use cn() for conditional classes
+import { cn } from '@/lib/utils';
+
+interface ButtonProps {
+  variant?: 'default' | 'destructive' | 'secondary';
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+}
+
+export function CustomButton({ variant = 'default', size = 'md', className, ...props }: ButtonProps) {
+  return (
+    <button
+      className={cn(
+        'inline-flex items-center justify-center rounded-md transition-colors',
+        {
+          'bg-primary text-primary-foreground': variant === 'default',
+          'bg-destructive text-destructive-foreground': variant === 'destructive',
+          'bg-secondary text-secondary-foreground': variant === 'secondary',
+        },
+        {
+          'h-8 px-3 text-sm': size === 'sm',
+          'h-10 px-4': size === 'md',
+          'h-12 px-6 text-lg': size === 'lg',
+        },
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
+// ❌ Bad: String concatenation or template literals for classes
+className={`base-class ${variant === 'primary' ? 'primary-class' : 'secondary-class'} ${className}`}
+```
+
+## Component Composition Patterns
+
+### Card Components
+
+```typescript
+// ✅ Good: Proper Card composition
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+
+export function UserCard({ user }: { user: User }) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{user.name}</CardTitle>
+        <CardDescription>{user.email}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p>{user.bio}</p>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### Form Components
+
+```typescript
+// ✅ Good: Form with shadcn/ui components
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+export function LoginForm() {
+  return (
+    <form className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          required
+        />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+      <Button type="submit" className="w-full">
+        Sign In
+      </Button>
+    </form>
+  );
+}
+```
+
+## Icon Usage with Lucide React
+
+### Consistent Icon Patterns
+
+```typescript
+// ✅ Good: Import and use Lucide icons
+import { ChevronRight, User, Settings } from 'lucide-react';
+
+export function Navigation() {
+  return (
+    <nav className="flex items-center space-x-4">
+      <Button variant="ghost" size="sm">
+        <User className="mr-2 h-4 w-4" />
+        Profile
+      </Button>
+      <Button variant="ghost" size="sm">
+        <Settings className="mr-2 h-4 w-4" />
+        Settings
+        <ChevronRight className="ml-2 h-4 w-4" />
+      </Button>
+    </nav>
+  );
+}
+
+// ✅ Good: Icon sizing conventions
+// h-4 w-4 (16px) - Small icons in buttons/inline text
+// h-5 w-5 (20px) - Medium icons
+// h-6 w-6 (24px) - Large icons for headers
+// h-8 w-8 (32px) - Extra large icons
+```
+
+## Component Variants and Props
+
+### Type-Safe Component APIs
+
+```typescript
+// ✅ Good: Proper variant typing with tv
+import { tv, type VariantProps } from 'tailwind-variants';
+import { cn } from '@/lib/utils';
+
+const buttonVariants = tv(
+  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+        destructive:
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline:
+          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary:
+          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
+      },
+      size: {
+        default: 'h-10 px-4 py-2',
+        sm: 'h-9 rounded-md px-3',
+        lg: 'h-11 rounded-md px-8',
+        icon: 'h-10 w-10',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+);
+
+interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+}
+
+export function Button({ className, variant, size, ...props }: ButtonProps) {
+  return (
+    <button
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  );
+}
+```
+
+## Accessibility Best Practices
+
+### Proper ARIA and Semantic HTML
+
+```typescript
+// ✅ Good: Accessible component structure
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+
+export function SettingsToggle({ label, description, ...props }: ToggleProps) {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="space-y-0.5">
+        <Label htmlFor={props.id}>{label}</Label>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      <Switch {...props} />
+    </div>
+  );
+}
+
+// ✅ Good: Dialog with proper focus management
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+
+export function ConfirmDialog({ onConfirm }: { onConfirm: () => void }) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="destructive">Delete Account</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogDescription>
+            This action cannot be undone. This will permanently delete your
+            account.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex justify-end space-x-2">
+          <Button variant="outline">Cancel</Button>
+          <Button variant="destructive" onClick={onConfirm}>
+            Delete Account
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+```
+
+## Component File Structure
+
+### Consistent Export Patterns
+
+```typescript
+// ✅ Good: Component file structure
+// components/ui/button.tsx
+import * as React from 'react';
+import { tv } from 'tailwind-variants';
+import { cn } from '@/lib/utils';
+
+// Variants definition
+const buttonVariants = tv(/* ... */);
+
+// Interface definition
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  // props
+}
+
+// Component implementation
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <button
+        ref={ref}
+        className={cn(buttonVariants({ className }))}
+        {...props}
+      />
+    );
+  }
+);
+Button.displayName = 'Button';
+
+// Named export
+export { Button, buttonVariants };
+```
+
+## Theme Integration
+
+### CSS Variables and Dark Mode
+
+```typescript
+// ✅ Good: Use CSS custom properties for theming
+// Components automatically inherit theme colors
+<Card className="border-border bg-card text-card-foreground">
+  <CardHeader className="pb-2">
+    <CardTitle className="text-foreground">Title</CardTitle>
+    <CardDescription className="text-muted-foreground">Description</CardDescription>
+  </CardHeader>
+</Card>
+
+// ✅ Good: Custom theme colors when needed
+<div className="bg-primary text-primary-foreground">Primary content</div>
+<div className="bg-secondary text-secondary-foreground">Secondary content</div>
+<div className="bg-muted text-muted-foreground">Muted content</div>
+```
+
+## Common Anti-Patterns to Avoid
+
+- ❌ Don't override shadcn/ui component internals
+- ❌ Don't use arbitrary Tailwind values when theme tokens exist
+- ❌ Don't bypass the cn() function for class concatenation
+- ❌ Don't ignore TypeScript props and variants
+- ❌ Don't forget forwardRef for components that need DOM access
