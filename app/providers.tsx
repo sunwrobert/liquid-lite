@@ -1,9 +1,8 @@
 'use client';
 
-import { PrivyProvider } from '@privy-io/react-auth';
+import { type PrivyClientConfig, PrivyProvider } from '@privy-io/react-auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
-import { useMemo } from 'react';
 import { createConfig, http, WagmiProvider } from 'wagmi';
 import { arbitrum, base, mainnet } from 'wagmi/chains';
 
@@ -18,19 +17,22 @@ const wagmiConfig = createConfig({
   },
 });
 
-export function Providers({ children }: { children: ReactNode }) {
-  const appId = useMemo(() => process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? '', []);
+const privyConfig: PrivyClientConfig = {
+  embeddedWallets: {
+    createOnLogin: 'users-without-wallets',
+    requireUserPasswordOnCreate: true,
+  },
+  loginMethods: ['wallet', 'email', 'sms'],
+  appearance: {
+    showWalletLoginFirst: true,
+  },
+};
 
+export function Providers({ children }: { children: ReactNode }) {
   return (
     <PrivyProvider
-      appId={appId}
-      config={{
-        appearance: {
-          showWalletLoginFirst: false,
-        },
-        loginMethods: ['wallet'],
-        embeddedWallets: { createOnLogin: 'users-without-wallets' },
-      }}
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID ?? ''}
+      config={privyConfig}
     >
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>

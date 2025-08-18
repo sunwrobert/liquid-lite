@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Hyperliquid } from './icons/hyperliquid';
 import { NavLink } from './nav-link';
-import { Button } from './ui/button';
+import { ConnectButton } from './connect-button';
 
 export function Navbar() {
   return (
@@ -19,7 +19,7 @@ export function Navbar() {
           <NavLink href="/leaderboard">Leaderboard</NavLink>
         </div>
       </div>
-      <Button>Connect</Button>
+      <ConnectButton />
     </nav>
   );
 }
