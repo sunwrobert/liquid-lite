@@ -8,3 +8,4 @@ description: Ongoing set of rules added by developers with rules you ALWAYS must
 - NEVER use forwardRef. This is not needed in React 19
 - ALWAYS use @ui Text component for rendering regular text.
 - NEVER use default tailwind colors. Use the ones defined in our globals.css
+- ALWAYS use Type over Interface.

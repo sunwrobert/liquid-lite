@@ -5,8 +5,9 @@ const nextConfig: NextConfig = {
   env: {
     NEXT_PUBLIC_PRIVY_APP_ID: process.env.NEXT_PUBLIC_PRIVY_APP_ID,
   },
+  // biome-ignore lint/suspicious/useAwait: this is fine
   async redirects() {
-    return await [
+    return [
       {
         source: '/',
         destination: '/trade',
