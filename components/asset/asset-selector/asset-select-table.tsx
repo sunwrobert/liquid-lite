@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { Badge } from '@/components/ui/badge';
 import { StatChange } from '@/components/ui/stat-change';
 import {
@@ -13,7 +15,6 @@ import {
 import { Text } from '@/components/ui/text';
 import { formatNumber } from '@/lib/format';
 import type { AssetContext, UniverseItem } from '@/lib/schemas';
-import { cn } from '@/lib/utils';
 
 const PERCENTAGE_MULTIPLIER = 100;
 
@@ -23,17 +24,11 @@ type AssetSelectTableProps = {
     context: AssetContext;
   }>;
   searchTerm: string;
-  selectedAsset: string;
-  onAssetSelect: (asset: string) => void;
-  onClose: () => void;
 };
 
 export function AssetSelectTable({
   assets,
   searchTerm,
-  selectedAsset,
-  onAssetSelect,
-  onClose,
 }: AssetSelectTableProps) {
   // Filter assets based on search term and limit to first 10 for performance
   const filteredAssets = assets
@@ -41,11 +36,6 @@ export function AssetSelectTable({
       asset.universe.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .slice(0, 10);
-
-  const handleAssetClick = (assetName: string) => {
-    onAssetSelect(assetName);
-    onClose();
-  };
 
   return (
     <div className="scrollbar-hidden max-h-[400px] overflow-y-auto">
@@ -89,20 +79,19 @@ export function AssetSelectTable({
 
             return (
               <TableRow
-                className={cn(
-                  'h-6 cursor-pointer border-0 transition-none hover:bg-border',
-                  selectedAsset === asset.universe.name && 'bg-muted'
-                )}
+                className="h-6 border-0 transition-none hover:bg-border"
                 key={asset.universe.name}
-                onClick={() => handleAssetClick(asset.universe.name)}
               >
                 <TableCell className="h-6 p-0 align-middle">
-                  <div className="flex items-center gap-2">
+                  <Link
+                    className="flex cursor-pointer items-center gap-2"
+                    href={`/trade/${asset.universe.name}`}
+                  >
                     <Text className="font-medium">
                       {asset.universe.name}-USD
                     </Text>
                     <Badge>{asset.universe.maxLeverage}x</Badge>
-                  </div>
+                  </Link>
                 </TableCell>
                 <TableCell className="h-6 p-0 align-middle">
                   <Text>

@@ -24,22 +24,13 @@ function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
 }
 
 function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
-  return (
-    <tbody
-      className={cn('[&_tr:last-child]:border-0', className)}
-      data-slot="table-body"
-      {...props}
-    />
-  );
+  return <tbody className={className} data-slot="table-body" {...props} />;
 }
 
 function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
   return (
     <tr
-      className={cn(
-        'border-b transition-colors data-[state=selected]:bg-muted',
-        className
-      )}
+      className={cn('border-b transition-colors', className)}
       data-slot="table-row"
       {...props}
     />

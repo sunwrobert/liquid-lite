@@ -12,17 +12,7 @@ import type { AssetContext } from '@/lib/schemas';
 import { AssetSelectTable } from './asset-select-table';
 import { AssetSelectTabs } from './asset-select-tabs';
 
-type AssetSelectContentProps = {
-  selectedAsset: string;
-  onAssetSelect: (asset: string) => void;
-  onClose: () => void;
-};
-
-export function AssetSelectContent({
-  selectedAsset,
-  onAssetSelect,
-  onClose,
-}: AssetSelectContentProps) {
+export function AssetSelectContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
   const { data, isLoading, error } = useMetaAndAssetCtxs({});
@@ -71,112 +61,43 @@ export function AssetSelectContent({
       {/* Tabs and Table */}
       <AssetSelectTabs onTabChange={setSelectedTab} selectedTab={selectedTab}>
         <TabsContent className="mt-0" value="all">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="perps">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="spot">
           <AssetSelectTable
             assets={assets.filter(() => false)} // No spot assets for now
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
             searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
           />
         </TabsContent>
         <TabsContent className="mt-0" value="trending">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="dex-only">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="pre-launch">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="ai">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="defi">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="gaming">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="layer1">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="layer2">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="meme">
-          <AssetSelectTable
-            assets={assets}
-            onAssetSelect={onAssetSelect}
-            onClose={onClose}
-            searchTerm={searchTerm}
-            selectedAsset={selectedAsset}
-          />
+          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
         </TabsContent>
       </AssetSelectTabs>
     </div>
