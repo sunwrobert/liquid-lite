@@ -57,8 +57,8 @@
   --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.2 0.008 264);
   --muted-foreground: oklch(0.6906 0.0118 182.71);
-  --accent: oklch(0.3028 0.0153 232.29);
-  --accent-foreground: oklch(1 0 0);
+  --accent: oklch(0.357 0.0509 183.46);
+  --accent-foreground: var(--highlight);
   --error: oklch(0.6991 0.1553 9.97);
   --success: oklch(0.6466 0.1262 166.51);
   --success-2: oklch(0.7879 0.116 183.17);
@@ -126,9 +126,4 @@
 
 @utility animate-negative-flash {
   animation: negative-flash 0.8s ease-in-out;
-}
-
-@utility font-mono-numbers {
-  font-feature-settings: "tnum" 1;
-  font-variant-numeric: tabular-nums;
 }

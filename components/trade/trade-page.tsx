@@ -22,7 +22,7 @@ export function TradePage({ asset, tradingType }: TradePageProps) {
 
   return (
     <TradeProvider asset={asset} tradingType={tradingType}>
-      <AssetToolbar asset={asset}>
+      <AssetToolbar>
         {tradingType === 'perps' ? (
           <AssetPerpsToolbar asset={asset} />
         ) : (
