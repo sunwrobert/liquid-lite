@@ -25,7 +25,7 @@ const TradePreferencesStringSchema = z
 const TRADE_PREFERENCES_COOKIE = 'trade-preferences';
 
 export const DEFAULT_TRADE_PREFERENCES: TradePreferences = {
-  asset: 'BTC',
+  asset: 'ETH',
   tradingType: 'perps',
 };
 

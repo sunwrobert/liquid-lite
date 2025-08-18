@@ -2,8 +2,10 @@
 
 import { useEffect } from 'react';
 import { setCookie } from 'react-use-cookie';
+import { AssetPerpsToolbar } from '@/components/asset/asset-perps-toolbar';
+import { AssetSpotToolbar } from '@/components/asset/asset-spot-toolbar';
+import { AssetToolbar } from '@/components/asset/asset-toolbar';
 import { TradeProvider } from '@/providers/trade-provider';
-import { TradePageContent } from './trade-page-content';
 
 type TradingType = 'perps' | 'spot';
 
@@ -20,14 +22,13 @@ export function TradePage({ asset, tradingType }: TradePageProps) {
 
   return (
     <TradeProvider asset={asset} tradingType={tradingType}>
-      <div className="container mx-auto px-4">
-        <h1 className="mb-6 font-bold text-2xl">
-          {tradingType === 'spot'
-            ? `${asset.toUpperCase()}/USDC Spot`
-            : `${asset.toUpperCase()} Perpetuals`}
-        </h1>
-        <TradePageContent />
-      </div>
+      <AssetToolbar asset={asset}>
+        {tradingType === 'perps' ? (
+          <AssetPerpsToolbar asset={asset} />
+        ) : (
+          <AssetSpotToolbar asset={asset} />
+        )}
+      </AssetToolbar>
     </TradeProvider>
   );
 }

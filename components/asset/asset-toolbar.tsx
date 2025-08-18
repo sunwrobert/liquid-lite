@@ -1,13 +1,13 @@
 import { Card } from '@/components/ui/card';
 import { Text } from '../ui/text';
-import { AssetStats } from './asset-stats';
 
 type AssetToolbarProps = {
-  asset?: string;
+  asset: string;
+  children: React.ReactNode;
 };
 
-export function AssetToolbar({ asset = 'HYPE' }: AssetToolbarProps) {
-  const displayName = asset ? `${asset.toUpperCase()}-USD` : 'HYPE-USD';
+export function AssetToolbar({ asset, children }: AssetToolbarProps) {
+  const displayName = `${asset.toUpperCase()}-USD`;
 
   return (
     <Card className="max-h-16">
@@ -17,7 +17,7 @@ export function AssetToolbar({ asset = 'HYPE' }: AssetToolbarProps) {
             {displayName}
           </Text>
         </div>
-        <AssetStats />
+        {children}
       </div>
     </Card>
   );
