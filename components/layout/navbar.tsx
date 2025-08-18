@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import { Hyperliquid } from './icons/hyperliquid';
+import { Hyperliquid } from '../icons/hyperliquid';
+import { ConnectButton } from '../wallet/connect-button';
 import { NavLink } from './nav-link';
-import { ConnectButton } from './connect-button';
 
 export function Navbar() {
   return (
-    <nav className="flex h-14 items-center justify-between border-b bg-card px-2.5">
+    <nav className="sticky top-0 z-50 flex h-14 items-center justify-between bg-card px-2.5">
       <div className="flex items-center gap-5.5">
         <Link href="/">
           <Hyperliquid className="ml-1.5" />

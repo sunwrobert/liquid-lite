@@ -6,7 +6,8 @@ This file provides guidance for Claude AI when working with the Liquid-Lite Next
 
 IMPORTANT: You MUST immediately read ALL the following files when you see this CLAUDE.md:
 
-- [Code Quality Standards](.cursor/rules/ultracite.mdc) - Formatting, linting, and AI-ready code rules (READ FIRST)
+- [Must Follow](.cursor/rules/must-follow.mdc) - MANDATORY rules to follow (READ FIRST)
+- [Code Quality Standards](.cursor/rules/ultracite.mdc) - Formatting, linting, and AI-ready code rules (READ NOW)
 - [Next.js App Router Patterns](.cursor/rules/nextjs-app-router.mdc) - Next.js 15 conventions and best practices (READ NOW)
 - [Project Structure Guidelines](.cursor/rules/project-structure.mdc) - File organization and architecture patterns (READ NOW)
 - [shadcn/ui Component Rules](.cursor/rules/shadcn-components.mdc) - Component composition and UI patterns (READ NOW)

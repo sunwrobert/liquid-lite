@@ -10,15 +10,21 @@ const textVariants = tv({
       sm: 'text-xs',
       lg: 'text-xl',
     },
+    weight: {
+      regular: 'font-normal',
+      semibold: 'font-medium',
+    },
   },
   defaultVariants: {
     size: 'sm',
+    weight: 'regular',
   },
 });
 
 function Text({
   className,
   size,
+  weight,
   asChild = false,
   ...props
 }: React.ComponentProps<'span'> &
@@ -27,7 +33,12 @@ function Text({
   }) {
   const Comp = asChild ? Slot : 'span';
 
-  return <Comp className={cn(textVariants({ size, className }))} {...props} />;
+  return (
+    <Comp
+      className={cn(textVariants({ size, weight, className }))}
+      {...props}
+    />
+  );
 }
 
 export { Text, textVariants };

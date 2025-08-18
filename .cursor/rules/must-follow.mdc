@@ -1,0 +1,12 @@
+---
+alwaysApply: true
+description: Ongoing set of rules added by developers with rules you ALWAYS must follow. These rules should be concise.
+---
+
+**IMPORTANT: These rules are MANDATORY. You MUST follow every rule listed here without exception.**
+
+- NEVER use forwardRef. This is not needed in React 19
+- ALWAYS use @ui Text component for rendering regular text.
+- NEVER use default tailwind colors. Use the ones defined in our globals.css
+- ALWAYS use Type over Interface.
+- ALWAYS use zod for parsing/validation. Do not manually JSON.parse

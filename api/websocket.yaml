@@ -1,0 +1,715 @@
+asyncapi: '2.6.0'
+info:
+  title: Hyperliquid WebSocket Subscriptions
+  version: 1.0.0
+  description: |
+    WebSocket API for real-time trading, market, and user feeds from Hyperliquid.
+    Every feed available as defined in the official docs is described here.
+servers:
+  hyperliquid-ws:
+    url: wss://example.hyperliquid.xyz/ws
+    protocol: wss
+
+channels:
+  allMids:
+    description: Subscribe to all mid prices for a perp dex.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubAllMids'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/AllMids'
+
+  notification:
+    description: Subscribe to user notification messages.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubNotification'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/Notification'
+
+  webData2:
+    description: Subscribe to aggregate user data.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubWebData2'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WebData2'
+
+  candle:
+    description: Subscribe to candle data for a coin/interval.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubCandle'
+    publish:
+      message:
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/Candle'
+
+  l2Book:
+    description: Subscribe to Level 2 order book for a coin.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubL2Book'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WsBook'
+
+  trades:
+    description: Subscribe to trades for a coin.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubTrades'
+    publish:
+      message:
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/WsTrade'
+
+  orderUpdates:
+    description: Subscribe to updates for a user's orders.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubOrderUpdates'
+    publish:
+      message:
+        payload:
+          type: array
+          items:
+            $ref: '#/components/schemas/WsOrder'
+
+  userEvents:
+    description: Subscribe to a user's events (fills, funding, liquidation, nonUserCancel).
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubUserEvents'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WsUserEvent'
+
+  userFills:
+    description: Subscribe to a user's fills.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubUserFills'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WsUserFills'
+
+  userFundings:
+    description: Subscribe to a user's funding history.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubUserFundings'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WsUserFundings'
+
+  userNonFundingLedgerUpdates:
+    description: Subscribe to a user's non-funding ledger updates.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubUserNonFundingLedgerUpdates'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WsUserNonFundingLedgerUpdates'
+
+  activeAssetCtx:
+    description: Subscribe to the current context for a coin's asset.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubActiveAssetCtx'
+    publish:
+      message:
+        payload:
+          oneOf:
+            - $ref: '#/components/schemas/WsActiveAssetCtx'
+            - $ref: '#/components/schemas/WsActiveSpotAssetCtx'
+
+  activeAssetData:
+    description: Subscribe to current perps asset data for a user/coin.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubActiveAssetData'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WsActiveAssetData'
+
+  userTwapSliceFills:
+    description: Subscribe to a user's TWAP slice fills.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubUserTwapSliceFills'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WsUserTwapSliceFills'
+
+  userTwapHistory:
+    description: Subscribe to a user's TWAP history.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubUserTwapHistory'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WsUserTwapHistory'
+
+  bbo:
+    description: Subscribe to best bid/offer updates for a coin.
+    subscribe:
+      message:
+        payload:
+          $ref: '#/components/schemas/SubBbo'
+    publish:
+      message:
+        payload:
+          $ref: '#/components/schemas/WsBbo'
+
+components:
+  schemas:
+    # Subscription requests
+    SubAllMids:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['allMids'] }
+            dex: { type: string }
+          required: [type]
+      required: [method, subscription]
+
+    SubNotification:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['notification'] }
+            user: { type: string }
+          required: [type, user]
+      required: [method, subscription]
+
+    SubWebData2:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['webData2'] }
+            user: { type: string }
+          required: [type, user]
+      required: [method, subscription]
+
+    SubCandle:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['candle'] }
+            coin: { type: string }
+            interval:
+              type: string
+              enum:
+                [
+                  '1m',
+                  '3m',
+                  '5m',
+                  '15m',
+                  '30m',
+                  '1h',
+                  '2h',
+                  '4h',
+                  '8h',
+                  '12h',
+                  '1d',
+                  '3d',
+                  '1w',
+                  '1M',
+                ]
+          required: [type, coin, interval]
+      required: [method, subscription]
+
+    SubL2Book:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['l2Book'] }
+            coin: { type: string }
+            nSigFigs: { type: integer }
+            mantissa: { type: integer }
+          required: [type, coin]
+      required: [method, subscription]
+
+    SubTrades:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['trades'] }
+            coin: { type: string }
+          required: [type, coin]
+      required: [method, subscription]
+
+    SubOrderUpdates:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['orderUpdates'] }
+            user: { type: string }
+          required: [type, user]
+      required: [method, subscription]
+
+    SubUserEvents:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['userEvents'] }
+            user: { type: string }
+          required: [type, user]
+      required: [method, subscription]
+
+    SubUserFills:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['userFills'] }
+            user: { type: string }
+            aggregateByTime: { type: boolean }
+          required: [type, user]
+      required: [method, subscription]
+
+    SubUserFundings:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['userFundings'] }
+            user: { type: string }
+          required: [type, user]
+      required: [method, subscription]
+
+    SubUserNonFundingLedgerUpdates:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['userNonFundingLedgerUpdates'] }
+            user: { type: string }
+          required: [type, user]
+      required: [method, subscription]
+
+    SubActiveAssetCtx:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['activeAssetCtx'] }
+            coin: { type: string }
+          required: [type, coin]
+      required: [method, subscription]
+
+    SubActiveAssetData:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['activeAssetData'] }
+            user: { type: string }
+            coin: { type: string }
+          required: [type, user, coin]
+      required: [method, subscription]
+
+    SubUserTwapSliceFills:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['userTwapSliceFills'] }
+            user: { type: string }
+          required: [type, user]
+      required: [method, subscription]
+
+    SubUserTwapHistory:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['userTwapHistory'] }
+            user: { type: string }
+          required: [type, user]
+      required: [method, subscription]
+
+    SubBbo:
+      type: object
+      properties:
+        method: { type: string, enum: ['subscribe'] }
+        subscription:
+          type: object
+          properties:
+            type: { type: string, enum: ['bbo'] }
+            coin: { type: string }
+          required: [type, coin]
+      required: [method, subscription]
+
+    # Streaming response formats
+
+    AllMids:
+      type: object
+      properties:
+        mids:
+          type: object
+          additionalProperties:
+            type: string
+
+    Notification:
+      type: object
+      properties:
+        notification: { type: string }
+
+    WebData2:
+      type: object
+      description: 'Opaque aggregate user data (see docs for details)'
+
+    Candle:
+      type: object
+      properties:
+        t: { type: integer }
+        T: { type: integer }
+        s: { type: string }
+        i: { type: string }
+        o: { type: number }
+        c: { type: number }
+        h: { type: number }
+        l: { type: number }
+        v: { type: number }
+        n: { type: integer }
+
+    WsBook:
+      type: object
+      properties:
+        coin: { type: string }
+        levels:
+          type: array
+          items:
+            type: array
+            items:
+              $ref: '#/components/schemas/WsLevel'
+        time: { type: integer }
+
+    WsLevel:
+      type: object
+      properties:
+        px: { type: string }
+        sz: { type: string }
+        n: { type: integer }
+
+    WsTrade:
+      type: object
+      properties:
+        coin: { type: string }
+        side: { type: string }
+        px: { type: string }
+        sz: { type: string }
+        hash: { type: string }
+        time: { type: integer }
+        tid: { type: integer }
+        users:
+          type: array
+          items: { type: string }
+          minItems: 2
+          maxItems: 2
+
+    WsOrder:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/WsBasicOrder'
+        status: { type: string }
+        statusTimestamp: { type: integer }
+
+    WsBasicOrder:
+      type: object
+      properties:
+        coin: { type: string }
+        side: { type: string }
+        limitPx: { type: string }
+        sz: { type: string }
+        oid: { type: integer }
+        timestamp: { type: integer }
+        origSz: { type: string }
+        cloid: { type: string }
+
+    WsUserEvent:
+      type: object
+      oneOf:
+        - properties:
+            fills:
+              type: array
+              items: { $ref: '#/components/schemas/WsFill' }
+        - properties:
+            funding:
+              $ref: '#/components/schemas/WsUserFunding'
+        - properties:
+            liquidation:
+              $ref: '#/components/schemas/WsLiquidation'
+        - properties:
+            nonUserCancel:
+              type: array
+              items: { $ref: '#/components/schemas/WsNonUserCancel' }
+
+    WsUserFills:
+      type: object
+      properties:
+        isSnapshot: { type: boolean }
+        user: { type: string }
+        fills:
+          type: array
+          items: { $ref: '#/components/schemas/WsFill' }
+
+    WsFill:
+      type: object
+      properties:
+        coin: { type: string }
+        px: { type: string }
+        sz: { type: string }
+        side: { type: string }
+        time: { type: integer }
+        startPosition: { type: string }
+        dir: { type: string }
+        closedPnl: { type: string }
+        hash: { type: string }
+        oid: { type: integer }
+        crossed: { type: boolean }
+        fee: { type: string }
+        tid: { type: integer }
+        liquidation: { $ref: '#/components/schemas/FillLiquidation' }
+        feeToken: { type: string }
+        builderFee: { type: string }
+
+    FillLiquidation:
+      type: object
+      properties:
+        liquidatedUser: { type: string }
+        markPx: { type: number }
+        method: { type: string, enum: ['market', 'backstop'] }
+
+    WsUserFunding:
+      type: object
+      properties:
+        time: { type: integer }
+        coin: { type: string }
+        usdc: { type: string }
+        szi: { type: string }
+        fundingRate: { type: string }
+
+    WsLiquidation:
+      type: object
+      properties:
+        lid: { type: integer }
+        liquidator: { type: string }
+        liquidated_user: { type: string }
+        liquidated_ntl_pos: { type: string }
+        liquidated_account_value: { type: string }
+
+    WsNonUserCancel:
+      type: object
+      properties:
+        coin: { type: string }
+        oid: { type: integer }
+
+    WsUserFundings:
+      type: object
+      properties:
+        isSnapshot: { type: boolean }
+        user: { type: string }
+        fundings:
+          type: array
+          items: { $ref: '#/components/schemas/WsUserFunding' }
+
+    WsUserNonFundingLedgerUpdates:
+      type: object
+      description: 'See docs for ledger update types and fields'
+
+    WsActiveAssetCtx:
+      type: object
+      properties:
+        coin: { type: string }
+        ctx: { $ref: '#/components/schemas/PerpsAssetCtx' }
+
+    WsActiveSpotAssetCtx:
+      type: object
+      properties:
+        coin: { type: string }
+        ctx: { $ref: '#/components/schemas/SpotAssetCtx' }
+
+    PerpsAssetCtx:
+      allOf:
+        - $ref: '#/components/schemas/SharedAssetCtx'
+        - type: object
+          properties:
+            funding: { type: number }
+            openInterest: { type: number }
+            oraclePx: { type: number }
+
+    SpotAssetCtx:
+      allOf:
+        - $ref: '#/components/schemas/SharedAssetCtx'
+        - type: object
+          properties:
+            circulatingSupply: { type: number }
+
+    SharedAssetCtx:
+      type: object
+      properties:
+        dayNtlVlm: { type: number }
+        prevDayPx: { type: number }
+        markPx: { type: number }
+        midPx: { type: number }
+
+    WsActiveAssetData:
+      type: object
+      properties:
+        user: { type: string }
+        coin: { type: string }
+        leverage:
+          type: object
+          properties:
+            type: { type: string }
+            value: { type: integer }
+        maxTradeSzs:
+          type: array
+          items: { type: number }
+          minItems: 2
+          maxItems: 2
+        availableToTrade:
+          type: array
+          items: { type: number }
+          minItems: 2
+          maxItems: 2
+
+    WsTwapSliceFill:
+      type: object
+      properties:
+        fill: { $ref: '#/components/schemas/WsFill' }
+        twapId: { type: integer }
+
+    WsUserTwapSliceFills:
+      type: object
+      properties:
+        isSnapshot: { type: boolean }
+        user: { type: string }
+        twapSliceFills:
+          type: array
+          items: { $ref: '#/components/schemas/WsTwapSliceFill' }
+
+    TwapState:
+      type: object
+      properties:
+        coin: { type: string }
+        user: { type: string }
+        side: { type: string }
+        sz: { type: number }
+        executedSz: { type: number }
+        executedNtl: { type: number }
+        minutes: { type: number }
+        reduceOnly: { type: boolean }
+        randomize: { type: boolean }
+        timestamp: { type: number }
+
+    TwapStatus:
+      type: string
+      enum: ['activated', 'terminated', 'finished', 'error']
+
+    WsTwapHistory:
+      type: object
+      properties:
+        state: { $ref: '#/components/schemas/TwapState' }
+        status:
+          type: object
+          properties:
+            status: { $ref: '#/components/schemas/TwapStatus' }
+            description: { type: string }
+        time: { type: integer }
+
+    WsUserTwapHistory:
+      type: object
+      properties:
+        isSnapshot: { type: boolean }
+        user: { type: string }
+        history:
+          type: array
+          items: { $ref: '#/components/schemas/WsTwapHistory' }
+
+    WsBbo:
+      type: object
+      properties:
+        coin: { type: string }
+        time: { type: integer }
+        bbo:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/WsLevel'
+              - type: null

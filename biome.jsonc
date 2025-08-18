@@ -4,7 +4,8 @@
   "linter": {
     "rules": {
       "suspicious": {
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        "noArrayIndexKey": "off"
       }
     }
   }

@@ -1,10 +1,13 @@
-export default function TradePage() {
+import { TradePage } from '@/components/trade/trade-page';
+import { getTradePreferences } from '@/lib/cookies/trade';
+
+export default async function TradePageRoute() {
+  const preferences = await getTradePreferences();
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="font-bold text-3xl">Trade</h1>
-      <p className="mt-2 text-muted-foreground">
-        Trading interface coming soon.
-      </p>
-    </div>
+    <TradePage
+      asset={preferences.asset}
+      tradingType={preferences.tradingType}
+    />
   );
 }
