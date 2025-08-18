@@ -143,7 +143,7 @@ import { ChevronRight, User, Settings } from 'lucide-react';
 
 export function Navigation() {
   return (
-    <nav className="flex items-center space-x-4">
+    <nav className="flex items-center gap-4">
       <Button variant="ghost" size="sm">
         <User className="mr-2 h-4 w-4" />
         Profile
@@ -263,7 +263,7 @@ export function ConfirmDialog({ onConfirm }: { onConfirm: () => void }) {
             account.
           </DialogDescription>
         </DialogHeader>
-        <div className="flex justify-end space-x-2">
+        <div className="flex justify-end gap-2">
           <Button variant="outline">Cancel</Button>
           <Button variant="destructive" onClick={onConfirm}>
             Delete Account
