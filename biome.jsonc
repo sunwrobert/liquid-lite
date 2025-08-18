@@ -6,6 +6,9 @@
       "suspicious": {
         "noUnknownAtRules": "off",
         "noArrayIndexKey": "off"
+      },
+      "style": {
+        "noMagicNumbers": "off"
       }
     }
   }
