@@ -9,3 +9,4 @@ description: Ongoing set of rules added by developers with rules you ALWAYS must
 - ALWAYS use @ui Text component for rendering regular text.
 - NEVER use default tailwind colors. Use the ones defined in our globals.css
 - ALWAYS use Type over Interface.
+- ALWAYS use zod for parsing/validation. Do not manually JSON.parse

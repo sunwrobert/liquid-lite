@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { TradeProvider } from '@/providers/trade-provider';
+import { TradePage } from '@/components/trade/trade-page';
 
 type AssetPerpsPageProps = {
   params: { asset: string };
@@ -16,14 +16,5 @@ export async function generateMetadata({
 }
 
 export default function AssetPerpsPage({ params }: AssetPerpsPageProps) {
-  return (
-    <TradeProvider asset={params.asset} tradingType="perps">
-      <div className="container mx-auto px-4">
-        <h1 className="mb-6 font-bold text-2xl">
-          {params.asset.toUpperCase()} Perpetuals
-        </h1>
-        {/* Trading interface will go here */}
-      </div>
-    </TradeProvider>
-  );
+  return <TradePage asset={params.asset} tradingType="perps" />;
 }

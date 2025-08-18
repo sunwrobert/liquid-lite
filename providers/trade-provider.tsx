@@ -25,14 +25,6 @@ type TradeProviderProps = {
   tradingType: TradingType;
 };
 
-export function TradeProvider({
-  children,
-  asset,
-  tradingType,
-}: TradeProviderProps) {
-  return (
-    <TradeContext.Provider value={{ asset, tradingType }}>
-      {children}
-    </TradeContext.Provider>
-  );
+export function TradeProvider({ children, ...context }: TradeProviderProps) {
+  return <TradeContext value={context}>{children}</TradeContext>;
 }

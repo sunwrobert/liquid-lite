@@ -1,9 +1,13 @@
-import { AssetToolbar } from '@/components/asset/asset-toolbar';
+import { TradePage } from '@/components/trade/trade-page';
+import { getTradePreferences } from '@/lib/cookies/trade';
 
-export default function TradePage() {
+export default async function TradePageRoute() {
+  const preferences = await getTradePreferences();
+
   return (
-    <div className="px-1 pt-1">
-      <AssetToolbar />
-    </div>
+    <TradePage
+      asset={preferences.asset}
+      tradingType={preferences.tradingType}
+    />
   );
 }
