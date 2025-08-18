@@ -1,9 +1,10 @@
 import { cn } from '@/lib/utils';
+import { Text } from './text';
 
 function Stat({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('flex flex-col items-center gap-1', className)}
+      className={cn('flex flex-col items-start gap-1', className)}
       {...props}
     />
   );
@@ -12,17 +13,22 @@ function Stat({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
 function StatLabel({
   className,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
+}: React.HTMLAttributes<HTMLSpanElement>) {
   return (
-    <p className={cn('text-muted-foreground text-xs', className)} {...props} />
+    <Text
+      className={cn('text-muted-foreground', className)}
+      size="sm"
+      weight="regular"
+      {...props}
+    />
   );
 }
 
 function StatValue({
   className,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn('font-medium text-sm', className)} {...props} />;
+}: React.HTMLAttributes<HTMLSpanElement>) {
+  return <Text className={className} size="sm" weight="semibold" {...props} />;
 }
 
 export { Stat, StatLabel, StatValue };

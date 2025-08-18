@@ -2,7 +2,7 @@ import { Stat, StatLabel, StatValue } from '@/components/ui/stat';
 
 export function AssetStats() {
   return (
-    <div className="flex items-center justify-center gap-8">
+    <div className="flex shrink-0 items-center gap-8">
       <Stat>
         <StatLabel>Mark</StatLabel>
         <StatValue>43.970</StatValue>
@@ -13,7 +13,7 @@ export function AssetStats() {
       </Stat>
       <Stat>
         <StatLabel>24h Change</StatLabel>
-        <StatValue className="text-red-500">-2.741 / -5.87%</StatValue>
+        <StatValue className="text-error">-2.741 / -5.87%</StatValue>
       </Stat>
       <Stat>
         <StatLabel>24h Volume</StatLabel>

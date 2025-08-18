@@ -4,14 +4,12 @@ import { AssetStats } from './asset-stats';
 
 export function AssetToolbar() {
   return (
-    <Card>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Text size="lg" weight="semibold">
-              HYPE-USD
-            </Text>
-          </div>
+    <Card className="max-h-16">
+      <div className="scrollbar-hidden flex items-center overflow-x-auto">
+        <div className="sticky left-0 flex h-12 shrink-0 items-center gap-2 bg-card pr-8">
+          <Text size="lg" weight="semibold">
+            HYPE-USD
+          </Text>
         </div>
         <AssetStats />
       </div>

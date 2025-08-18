@@ -21,7 +21,8 @@
   --color-chart-1: var(--chart-1);
   --color-input: var(--input);
   --color-border: var(--border);
-  --color-destructive: var(--destructive);
+  --color-error: var(--error);
+  --color-success: var(--success);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -54,10 +55,11 @@
   --secondary: oklch(0.2097 0.0186 228);
   --secondary-foreground: oklch(1 0 0);
   --muted: oklch(0.2 0.008 264);
-  --muted-foreground: oklch(0.65 0.008 264);
+  --muted-foreground: oklch(0.6906 0.0118 182.71);
   --accent: oklch(0.3028 0.0153 232.29);
   --accent-foreground: oklch(1 0 0);
-  --destructive: oklch(0.65 0.2 12);
+  --error: oklch(0.6991 0.1553 9.97);
+  --success: oklch(0.6466 0.1262 166.51);
   --border: oklch(0.3028 0.0153 232.29);
   --input: oklch(0.18 0.008 264);
   --chart-1: oklch(0.65 0.15 180);
@@ -85,5 +87,11 @@
   button:not([disabled]),
   [role="button"]:not([disabled]) {
     cursor: pointer;
+  }
+}
+
+@utility scrollbar-hidden {
+  &::-webkit-scrollbar {
+    display: none;
   }
 }

@@ -10,8 +10,7 @@ const buttonVariants = tv({
     variant: {
       default:
         'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
-      destructive:
-        'bg-destructive text-white shadow-xs hover:bg-destructive/90',
+      error: 'bg-error text-white shadow-xs hover:bg-error/90',
       secondary:
         'border bg-card text-card-foreground shadow-xs outline-border hover:bg-card/80',
       ghost:

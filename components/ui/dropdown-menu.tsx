@@ -4,6 +4,7 @@
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
 import type * as React from 'react';
+import { tv, type VariantProps } from 'tailwind-variants';
 
 import { cn } from '@/lib/utils';
 
@@ -60,24 +61,34 @@ function DropdownMenuGroup({
   );
 }
 
+const dropdownMenuItemVariants = tv({
+  base: "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden focus:bg-accent data-[disabled]:pointer-events-none data-[inset]:pl-8 data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  variants: {
+    variant: {
+      default: '',
+      error:
+        '[&_svg]:!text-error text-error focus:bg-error/10 focus:text-error dark:focus:bg-error/20',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
 function DropdownMenuItem({
   className,
   inset,
   variant = 'default',
   ...props
-}: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & {
-  inset?: boolean;
-  variant?: 'default' | 'destructive';
-}) {
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Item> &
+  VariantProps<typeof dropdownMenuItemVariants> & {
+    inset?: boolean;
+  }) {
   return (
     <DropdownMenuPrimitive.Item
-      className={cn(
-        "data-[variant=destructive]:*:[svg]:!text-destructive relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden focus:bg-accent data-[disabled]:pointer-events-none data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[disabled]:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
-        className
-      )}
+      className={cn(dropdownMenuItemVariants({ variant }), className)}
       data-inset={inset}
       data-slot="dropdown-menu-item"
-      data-variant={variant}
       {...props}
     />
   );
