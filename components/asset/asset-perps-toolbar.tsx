@@ -1,5 +1,6 @@
 'use client';
 
+import { ChangeAnimation } from '@/components/ui/change-animation';
 import { Countdown } from '@/components/ui/countdown';
 import { Stat, StatLabel, StatValue } from '@/components/ui/stat';
 import { StatChange } from '@/components/ui/stat-change';
@@ -12,10 +13,9 @@ type AssetPerpsToolbarProps = {
 
 const LOADING_STATS_COUNT = 6;
 const PERCENTAGE_MULTIPLIER = 100;
-const DECIMAL_PLACES_PRICE = 3;
 
 export function AssetPerpsToolbar({ asset }: AssetPerpsToolbarProps) {
-  const { data, isLoading, error } = useMetaAndAssetCtxs();
+  const { data, isLoading, error } = useMetaAndAssetCtxs({ asset });
 
   if (isLoading) {
     return (
@@ -41,12 +41,10 @@ export function AssetPerpsToolbar({ asset }: AssetPerpsToolbarProps) {
     );
   }
 
-  const [meta, assetCtxs] = data;
-  const assetIndex = meta.universe.findIndex(
-    (item) => item.name.toLowerCase() === asset.toLowerCase()
-  );
+  const assetKey = asset.toLowerCase();
+  const assetCtx = data.assets[assetKey];
 
-  if (assetIndex === -1) {
+  if (!assetCtx) {
     return (
       <div className="flex shrink-0 items-center gap-8">
         <Stat>
@@ -56,8 +54,6 @@ export function AssetPerpsToolbar({ asset }: AssetPerpsToolbarProps) {
       </div>
     );
   }
-
-  const assetCtx = assetCtxs[assetIndex];
 
   // Calculate 24h change
   const markPx = Number.parseFloat(assetCtx.markPx);
@@ -77,21 +73,38 @@ export function AssetPerpsToolbar({ asset }: AssetPerpsToolbarProps) {
     <div className="flex shrink-0 items-center gap-8">
       <Stat>
         <StatLabel>Mark</StatLabel>
-        <StatValue>
-          {Number.parseFloat(assetCtx.markPx).toFixed(DECIMAL_PLACES_PRICE)}
+        <StatValue className="font-mono-numbers">
+          <ChangeAnimation value={markPx}>
+            {formatNumber(markPx, {
+              display: 'standard',
+              options: {
+                minimumSignificantDigits: 5,
+                maximumSignificantDigits: 5,
+              },
+            })}
+          </ChangeAnimation>
         </StatValue>
       </Stat>
       <Stat>
         <StatLabel>Oracle</StatLabel>
-        <StatValue>
-          {Number.parseFloat(assetCtx.oraclePx).toFixed(DECIMAL_PLACES_PRICE)}
+        <StatValue className="font-mono-numbers">
+          {formatNumber(Number.parseFloat(assetCtx.oraclePx), {
+            display: 'standard',
+          })}
         </StatValue>
       </Stat>
       <Stat>
         <StatLabel>24h Change</StatLabel>
-        <StatValue>
+        <StatValue className="font-mono-numbers">
           <StatChange change={change24h}>
-            {formatNumber(change24h, { display: 'usd' })} /{' '}
+            {formatNumber(change24h, {
+              display: 'standard',
+              options: {
+                minimumSignificantDigits: 4,
+                maximumSignificantDigits: 4,
+              },
+            })}{' '}
+            /{' '}
             {formatNumber(changePercent24h / PERCENTAGE_MULTIPLIER, {
               display: 'percent',
             })}
@@ -100,7 +113,7 @@ export function AssetPerpsToolbar({ asset }: AssetPerpsToolbarProps) {
       </Stat>
       <Stat>
         <StatLabel>24h Volume</StatLabel>
-        <StatValue>
+        <StatValue className="font-mono-numbers">
           {formatNumber(Number.parseFloat(assetCtx.dayNtlVlm), {
             display: 'usd',
           })}
@@ -108,7 +121,7 @@ export function AssetPerpsToolbar({ asset }: AssetPerpsToolbarProps) {
       </Stat>
       <Stat>
         <StatLabel>Open Interest</StatLabel>
-        <StatValue>
+        <StatValue className="font-mono-numbers">
           {formatNumber(Number.parseFloat(assetCtx.openInterest), {
             display: 'usd',
           })}
@@ -116,8 +129,8 @@ export function AssetPerpsToolbar({ asset }: AssetPerpsToolbarProps) {
       </Stat>
       <Stat>
         <StatLabel>Funding / Countdown</StatLabel>
-        <StatValue className="flex items-center gap-2">
-          <StatChange change={fundingRate}>
+        <StatValue className="flex items-center gap-2 font-mono-numbers">
+          <StatChange change={fundingRate} contrast>
             {formatNumber(fundingRate, {
               display: 'percent',
               options: {

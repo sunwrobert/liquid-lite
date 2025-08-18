@@ -23,6 +23,7 @@
   --color-border: var(--border);
   --color-error: var(--error);
   --color-success: var(--success);
+  --color-success-2: var(--success-2);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -60,6 +61,7 @@
   --accent-foreground: oklch(1 0 0);
   --error: oklch(0.6991 0.1553 9.97);
   --success: oklch(0.6466 0.1262 166.51);
+  --success-2: oklch(0.7879 0.116 183.17);
   --border: oklch(0.3028 0.0153 232.29);
   --input: oklch(0.18 0.008 264);
   --chart-1: oklch(0.65 0.15 180);
@@ -94,4 +96,39 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+@keyframes positive-flash {
+  0% {
+    color: var(--color-success);
+  }
+  100% {
+    color: currentColor;
+  }
+}
+
+@keyframes negative-flash {
+  0% {
+    color: var(--color-error);
+  }
+  100% {
+    color: currentColor;
+  }
+}
+
+@utility animate-change-flash {
+  animation: change-flash 0.8s ease-in-out;
+}
+
+@utility animate-positive-flash {
+  animation: positive-flash 0.8s ease-in-out;
+}
+
+@utility animate-negative-flash {
+  animation: negative-flash 0.8s ease-in-out;
+}
+
+@utility font-mono-numbers {
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
 }

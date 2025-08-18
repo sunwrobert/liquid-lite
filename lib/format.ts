@@ -1,4 +1,4 @@
-type FormatType = 'percent' | 'usd';
+type FormatType = 'percent' | 'usd' | 'standard';
 
 type FormatOptions = {
   display: FormatType;
@@ -9,6 +9,11 @@ function getFormatOptions(display: FormatType): Intl.NumberFormatOptions {
   // biome-ignore lint/style/useDefaultSwitchClause: not needed
   // biome-ignore lint/nursery/noUnnecessaryConditions: not needed
   switch (display) {
+    case 'standard':
+      return {
+        minimumSignificantDigits: 5,
+        maximumSignificantDigits: 5,
+      };
     case 'percent':
       return {
         style: 'percent',
