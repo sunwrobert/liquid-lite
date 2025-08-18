@@ -2,15 +2,15 @@
 
 import { usePrivy } from '@privy-io/react-auth';
 import { formatAddress } from '@/lib/address';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import { Text } from './ui/text';
+} from '../ui/dropdown-menu';
+import { Text } from '../ui/text';
 
 export function ConnectButton() {
   const { ready, authenticated, user, login, logout } = usePrivy();
@@ -23,7 +23,9 @@ export function ConnectButton() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="secondary">{formatAddress(user.wallet.address)}</Button>
+          <Button variant="secondary">
+            {formatAddress(user.wallet.address)}
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem className="flex justify-between">

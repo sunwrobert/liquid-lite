@@ -8,7 +8,8 @@
     "start": "next start",
     "format": "ultracite format",
     "lint": "ultracite lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepare": "lefthook install"
   },
   "dependencies": {
     "@privy-io/react-auth": "^2.21.3",

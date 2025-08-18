@@ -1,0 +1,8 @@
+---
+alwaysApply: true
+description: Ongoing set of rules added by developers with rules you ALWAYS must follow. These rules should be concise.
+---
+
+**IMPORTANT: These rules are MANDATORY. You MUST follow every rule listed here without exception.**
+
+- NEVER use forwardRef. This is not needed in React 19
