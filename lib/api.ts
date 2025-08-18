@@ -1,6 +1,8 @@
 import {
   type MetaAndAssetCtxsResponse,
   MetaAndAssetCtxsResponseSchema,
+  type SpotMetaAndAssetCtxsResponse,
+  SpotMetaAndAssetCtxsResponseSchema,
 } from './schemas';
 
 const API_BASE_URL = 'https://api.hyperliquid.xyz';
@@ -212,8 +214,9 @@ export function getSpotMeta(): Promise<ApiResponse> {
   return apiRequest({ type: 'spotMeta' });
 }
 
-export function getSpotMetaAndAssetCtxs(): Promise<ApiResponse> {
-  return apiRequest({ type: 'spotMetaAndAssetCtxs' });
+export async function getSpotMetaAndAssetCtxs(): Promise<SpotMetaAndAssetCtxsResponse> {
+  const data = await apiRequest({ type: 'spotMetaAndAssetCtxs' });
+  return SpotMetaAndAssetCtxsResponseSchema.parse(data);
 }
 
 export function getSpotClearinghouseState(user: string): Promise<ApiResponse> {

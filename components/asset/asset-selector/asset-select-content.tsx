@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { TabsContent } from '@/components/ui/tabs';
 import { Text } from '@/components/ui/text';
 import { useMetaAndAssetCtxs } from '@/hooks/use-meta-and-asset-ctxs';
-import type { AssetContext } from '@/lib/schemas';
+import { useSpotMetaAndAssetCtxs } from '@/hooks/use-spot-meta-and-asset-ctxs';
+import type { AssetContext, SpotAssetContext } from '@/lib/schemas';
 
 import { AssetSelectTable } from './asset-select-table';
 import { AssetSelectTabs } from './asset-select-tabs';
@@ -15,7 +16,28 @@ import { AssetSelectTabs } from './asset-select-tabs';
 export function AssetSelectContent() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTab, setSelectedTab] = useState('all');
-  const { data, isLoading, error } = useMetaAndAssetCtxs({});
+  const {
+    data: perpData,
+    isLoading: perpLoading,
+    error: perpError,
+  } = useMetaAndAssetCtxs({
+    queryOptions: {
+      refetchInterval: 5000, // Refetch every 5 seconds
+    },
+  });
+
+  const {
+    data: spotData,
+    isLoading: spotLoading,
+    error: spotError,
+  } = useSpotMetaAndAssetCtxs({
+    queryOptions: {
+      refetchInterval: 5000, // Refetch every 5 seconds
+    },
+  });
+
+  const isLoading = perpLoading || spotLoading;
+  const hasError = perpError || spotError;
 
   if (isLoading) {
     return (
@@ -25,22 +47,47 @@ export function AssetSelectContent() {
     );
   }
 
-  if (error || !data) {
+  // biome-ignore lint/complexity/useSimplifiedLogicExpression: its fine
+  if (hasError || (!perpData && !spotData && !isLoading)) {
     return (
       <div className="p-4">
         <Text>Failed to load assets</Text>
+        {perpError && (
+          <Text className="text-red-500">Perp error: {perpError.message}</Text>
+        )}
+        {spotError && (
+          <Text className="text-red-500">Spot error: {spotError.message}</Text>
+        )}
       </div>
     );
   }
 
-  // Combine universe and asset context data
-  const assets = data.universe
-    .map((universeItem) => ({
-      universe: universeItem,
-      context:
-        data.assets[universeItem.name.toLowerCase()] || ({} as AssetContext),
-    }))
-    .filter((asset) => asset.context.markPx); // Only show assets with valid data
+  // Combine perp assets
+  const perpAssets =
+    perpData?.universe
+      .map((universeItem) => ({
+        universe: universeItem,
+        context:
+          perpData.assets[universeItem.name.toLowerCase()] ||
+          ({} as AssetContext),
+        isSpot: false,
+      }))
+      .filter((asset) => asset.context.markPx) || []; // Only show assets with valid data
+
+  // Combine spot assets
+  const spotAssets =
+    spotData?.universe
+      .map((universeItem) => ({
+        universe: universeItem,
+        context:
+          spotData.assets[universeItem.name.toLowerCase()] ||
+          ({} as SpotAssetContext),
+        isSpot: true,
+      }))
+      .filter((asset) => asset.context.markPx) || []; // Only show assets with valid data
+
+  // All assets combined
+  const allAssets = [...perpAssets, ...spotAssets];
 
   return (
     <div className="flex min-w-[800px] flex-col gap-4">
@@ -61,43 +108,40 @@ export function AssetSelectContent() {
       {/* Tabs and Table */}
       <AssetSelectTabs onTabChange={setSelectedTab} selectedTab={selectedTab}>
         <TabsContent className="mt-0" value="all">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="perps">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={perpAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="spot">
-          <AssetSelectTable
-            assets={assets.filter(() => false)} // No spot assets for now
-            searchTerm={searchTerm}
-          />
+          <AssetSelectTable assets={spotAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="trending">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="dex-only">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="pre-launch">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="ai">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="defi">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="gaming">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="layer1">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="layer2">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
         <TabsContent className="mt-0" value="meme">
-          <AssetSelectTable assets={assets} searchTerm={searchTerm} />
+          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
         </TabsContent>
       </AssetSelectTabs>
     </div>

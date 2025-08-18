@@ -1,6 +1,10 @@
 'use client';
 
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type UseQueryOptions,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { keyBy } from 'es-toolkit';
 import type { z } from 'zod';
 import { getMetaAndAssetCtxs } from '@/lib/api';
@@ -19,6 +23,7 @@ const MARKET_DATA_REFETCH_INTERVAL_MS =
 
 type UseMetaAndAssetCtxsOptions = {
   asset?: string;
+  queryOptions?: Partial<UseQueryOptions<TransformedMetaAndAssetCtxs>>;
 };
 
 type TransformedMetaAndAssetCtxs = {
@@ -32,6 +37,7 @@ type TransformedMetaAndAssetCtxs = {
 
 export function useMetaAndAssetCtxs({
   asset,
+  queryOptions,
 }: UseMetaAndAssetCtxsOptions = {}) {
   const queryClient = useQueryClient();
 
@@ -45,7 +51,7 @@ export function useMetaAndAssetCtxs({
         | z.infer<typeof WsActiveSpotAssetCtxDataSchema>
     ) => {
       queryClient.setQueryData<TransformedMetaAndAssetCtxs>(
-        ['metaAndAssetCtxs'],
+        ['metaAndAssetCtxs', asset],
         (oldData) => {
           if (!(oldData?.assets && data.coin)) {
             return oldData;
@@ -69,7 +75,7 @@ export function useMetaAndAssetCtxs({
   });
 
   return useQuery<TransformedMetaAndAssetCtxs>({
-    queryKey: ['metaAndAssetCtxs'],
+    queryKey: ['metaAndAssetCtxs', asset],
     queryFn: async (): Promise<TransformedMetaAndAssetCtxs> => {
       const rawData = await getMetaAndAssetCtxs();
       const [meta, assetCtxs] = rawData;
@@ -93,5 +99,6 @@ export function useMetaAndAssetCtxs({
     },
     staleTime: MARKET_DATA_STALE_TIME_MS,
     refetchInterval: MARKET_DATA_REFETCH_INTERVAL_MS,
+    ...queryOptions,
   });
 }

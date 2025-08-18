@@ -8,7 +8,8 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Text } from '@/components/ui/text';
-
+import { useMetaAndAssetCtxs } from '@/hooks/use-meta-and-asset-ctxs';
+import { useSpotMetaAndAssetCtxs } from '@/hooks/use-spot-meta-and-asset-ctxs';
 import { AssetSelectContent } from './asset-select-content';
 
 type AssetSelectProps = {
@@ -16,6 +17,19 @@ type AssetSelectProps = {
 };
 
 export function AssetSelector({ selectedAsset }: AssetSelectProps) {
+  // Start loading assets immediately, even before popover opens
+  useMetaAndAssetCtxs({
+    queryOptions: {
+      refetchInterval: 5000,
+    },
+  });
+
+  useSpotMetaAndAssetCtxs({
+    queryOptions: {
+      refetchInterval: 5000,
+    },
+  });
+
   return (
     <Popover>
       <PopoverTrigger asChild>
