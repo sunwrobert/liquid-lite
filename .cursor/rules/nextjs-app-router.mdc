@@ -1,0 +1,237 @@
+---
+alwaysApply: true
+description: Next.js 15 App Router Conventions and Best Practices
+---
+
+# Next.js 15 App Router Rules
+
+This project uses Next.js 15 with the App Router, React 19, and modern conventions. Follow these patterns for consistency.
+
+## App Router Structure
+
+### Core Files
+
+- **Root Layout**: [app/layout.tsx](mdc:app/layout.tsx) - Global layout with fonts and metadata
+- **Page Components**: Use `page.tsx` for route pages
+- **Loading States**: Use `loading.tsx` for loading UI
+- **Error Boundaries**: Use `error.tsx` for error handling
+- **Not Found**: Use `not-found.tsx` for 404 pages
+
+### File Conventions
+
+```typescript
+// ✅ Good: Proper page component structure
+export default function HomePage() {
+  return (
+    <main className="container mx-auto px-4">
+      <h1>Welcome</h1>
+    </main>
+  );
+}
+
+// ✅ Good: Loading component
+export default function Loading() {
+  return <div>Loading...</div>;
+}
+
+// ✅ Good: Error component
+('use client');
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <div>
+      <h2>Something went wrong!</h2>
+      <button onClick={() => reset()}>Try again</button>
+    </div>
+  );
+}
+```
+
+## Server vs Client Components
+
+### Default to Server Components
+
+- Use Server Components by default (no 'use client' directive)
+- Only add 'use client' when you need:
+  - Event handlers (onClick, onChange, etc.)
+  - React hooks (useState, useEffect, etc.)
+  - Browser-only APIs
+
+### Client Component Patterns
+
+```typescript
+// ✅ Good: Client component for interactivity
+'use client';
+
+import { useState } from 'react';
+
+export default function Counter() {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>Count: {count}</button>;
+}
+```
+
+## Metadata and SEO
+
+### Static Metadata
+
+```typescript
+// ✅ Good: Static metadata export
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Page Title',
+  description: 'Page description for SEO',
+};
+```
+
+### Dynamic Metadata
+
+```typescript
+// ✅ Good: Dynamic metadata function
+import type { Metadata } from 'next';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { id: string };
+}): Promise<Metadata> {
+  const data = await fetchData(params.id);
+
+  return {
+    title: data.title,
+    description: data.description,
+  };
+}
+```
+
+## Data Fetching
+
+### Async Server Components
+
+```typescript
+// ✅ Good: Direct async data fetching in Server Components
+export default async function PostPage({ params }: { params: { id: string } }) {
+  const post = await fetch(`/api/posts/${params.id}`).then((res) => res.json());
+
+  return (
+    <article>
+      <h1>{post.title}</h1>
+      <p>{post.content}</p>
+    </article>
+  );
+}
+```
+
+## Route Handlers (API Routes)
+
+### API Route Structure
+
+```typescript
+// ✅ Good: API route in app/api/example/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  try {
+    const data = await fetchData();
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to fetch data' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  // Handle POST logic
+  return NextResponse.json({ success: true });
+}
+```
+
+## Image Optimization
+
+### Always Use next/image
+
+```typescript
+// ✅ Good: Use Next.js Image component
+import Image from 'next/image';
+
+<Image
+  src="/hero.jpg"
+  alt="Hero image description" // Required and descriptive
+  width={800}
+  height={400}
+  priority // For above-the-fold images
+  className="rounded-lg"
+/>
+
+// ❌ Bad: HTML img tag
+<img src="/hero.jpg" alt="Hero image" />
+```
+
+## Font Optimization
+
+### Google Fonts Setup
+
+```typescript
+// ✅ Good: Font loading in layout.tsx (already implemented)
+import { Geist, Geist_Mono } from 'next/font/google';
+
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+});
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
+```
+
+## Performance Best Practices
+
+### Dynamic Imports
+
+```typescript
+// ✅ Good: Dynamic imports for heavy components
+import dynamic from 'next/dynamic';
+
+const HeavyComponent = dynamic(() => import('@/components/HeavyComponent'), {
+  loading: () => <p>Loading...</p>,
+});
+```
+
+### Suspense Boundaries
+
+```typescript
+// ✅ Good: Suspense for data fetching
+import { Suspense } from 'react';
+
+export default function Page() {
+  return (
+    <div>
+      <h1>Posts</h1>
+      <Suspense fallback={<div>Loading posts...</div>}>
+        <PostList />
+      </Suspense>
+    </div>
+  );
+}
+```
+
+## Common Patterns to Avoid
+
+- ❌ Don't use `pages` directory (this is App Router)
+- ❌ Don't use `getStaticProps` or `getServerSideProps` (use async Server Components)
+- ❌ Don't use `next/head` (use metadata API)
+- ❌ Don't use `next/router` (use `next/navigation`)
+- ❌ Don't add 'use client' unless absolutely necessary

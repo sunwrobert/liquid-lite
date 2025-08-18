@@ -1,0 +1,364 @@
+---
+alwaysApply: true
+description: Project Structure and File Organization Rules
+---
+
+# Project Structure Rules
+
+This project follows a structured approach to file organization based on Next.js 15 App Router conventions, shadcn/ui patterns, and modern TypeScript practices.
+
+## Directory Structure
+
+```
+liquid-lite/
+├── app/                          # Next.js App Router
+│   ├── globals.css              # Global styles and Tailwind
+│   ├── layout.tsx               # Root layout component
+│   ├── page.tsx                 # Home page
+│   ├── favicon.ico              # App favicon
+│   └── [feature]/               # Feature-based routing
+│       ├── page.tsx             # Feature page
+│       ├── loading.tsx          # Loading UI
+│       ├── error.tsx            # Error boundary
+│       └── not-found.tsx        # 404 page
+├── components/                   # Reusable components
+│   ├── ui/                      # shadcn/ui base components
+│   ├── forms/                   # Form-specific components
+│   ├── layouts/                 # Layout components
+│   └── [feature]/               # Feature-specific components
+├── lib/                         # Utility functions and configurations
+│   ├── utils.ts                 # Core utilities (cn, etc.)
+│   ├── constants.ts             # App constants
+│   ├── types.ts                 # Shared type definitions
+│   ├── api.ts                   # API client functions
+│   └── validations.ts           # Schema validations
+├── hooks/                       # Custom React hooks
+├── public/                      # Static assets
+└── types/                       # Global TypeScript definitions
+```
+
+## File Naming Conventions
+
+### Component Files
+
+```typescript
+// ✅ Good: PascalCase for component files
+components / UserProfile.tsx;
+components / ui / Button.tsx;
+components / forms / LoginForm.tsx;
+
+// ✅ Good: kebab-case for multi-word features
+components / user - profile / UserAvatar.tsx;
+components / data - tables / UserTable.tsx;
+
+// ❌ Bad: Inconsistent naming
+components / userProfile.tsx;
+components / User_Profile.tsx;
+components / BUTTON.tsx;
+```
+
+### Hook Files
+
+```typescript
+// ✅ Good: use prefix with camelCase
+hooks / useLocalStorage.ts;
+hooks / useDebounce.ts;
+hooks / useUserProfile.ts;
+
+// ❌ Bad: Missing use prefix
+hooks / localStorage.ts;
+hooks / userProfile.ts;
+```
+
+### Utility Files
+
+```typescript
+// ✅ Good: Descriptive, kebab-case for multi-word
+lib / utils.ts;
+lib / api - client.ts;
+lib / date - helpers.ts;
+lib / validation - schemas.ts;
+
+// ❌ Bad: Vague naming
+lib / helpers.ts;
+lib / misc.ts;
+lib / stuff.ts;
+```
+
+## Import Organization
+
+### Import Order
+
+```typescript
+// ✅ Good: Structured import order
+// 1. React and Next.js imports
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+// 2. Third-party libraries
+import { clsx } from 'clsx';
+import { format } from 'date-fns';
+
+// 3. Internal utilities and config
+import { cn } from '@/lib/utils';
+import { API_ENDPOINTS } from '@/lib/constants';
+
+// 4. UI components
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+
+// 5. Feature components
+import { UserProfile } from '@/components/UserProfile';
+
+// 6. Types (using import type)
+import type { User } from '@/types/user';
+```
+
+### Path Mapping Usage
+
+```typescript
+// ✅ Good: Use configured path aliases from tsconfig.json
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { UserProfile } from '@/components/UserProfile';
+import type { User } from '@/types/user';
+
+// ❌ Bad: Relative imports for aliased paths
+import { Button } from '../../components/ui/button';
+import { cn } from '../lib/utils';
+```
+
+## Component Organization
+
+### Single Responsibility
+
+```typescript
+// ✅ Good: Focused component with single responsibility
+// components/UserAvatar.tsx
+interface UserAvatarProps {
+  user: { name: string; avatar?: string };
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export function UserAvatar({ user, size = 'md' }: UserAvatarProps) {
+  return (
+    <div className={cn('rounded-full', sizeClasses[size])}>
+      {user.avatar ? (
+        <Image src={user.avatar} alt={user.name} />
+      ) : (
+        <div className="bg-muted flex items-center justify-center">
+          {user.name.charAt(0).toUpperCase()}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ❌ Bad: Component doing too many things
+export function UserSection({ user }: { user: User }) {
+  // Handles avatar, profile info, actions, settings...
+  return <div>{/* 100+ lines of mixed concerns */}</div>;
+}
+```
+
+### Feature-Based Organization
+
+```typescript
+// ✅ Good: Group related components by feature
+components/
+├── user-profile/
+│   ├── UserAvatar.tsx
+│   ├── UserInfo.tsx
+│   ├── UserActions.tsx
+│   └── index.ts              # Barrel export
+├── product-catalog/
+│   ├── ProductCard.tsx
+│   ├── ProductGrid.tsx
+│   ├── ProductFilter.tsx
+│   └── index.ts
+└── ui/                       # Shared UI components
+    ├── Button.tsx
+    ├── Card.tsx
+    └── Input.tsx
+
+// components/user-profile/index.ts
+export { UserAvatar } from './UserAvatar';
+export { UserInfo } from './UserInfo';
+export { UserActions } from './UserActions';
+```
+
+## Type Definitions
+
+### Global Types Location
+
+```typescript
+// ✅ Good: Shared types in dedicated files
+// types/user.ts
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface UserProfile extends User {
+  bio?: string;
+  location?: string;
+  website?: string;
+}
+
+// ✅ Good: Component-specific types inline
+// components/UserCard.tsx
+interface UserCardProps {
+  user: User;
+  showActions?: boolean;
+  onEdit?: (user: User) => void;
+}
+
+export function UserCard({ user, showActions, onEdit }: UserCardProps) {
+  // Component implementation
+}
+```
+
+### API Types Organization
+
+```typescript
+// ✅ Good: API-specific types
+// types/api.ts
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface PaginatedResponse<T> extends ApiResponse<T[]> {
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+// lib/api.ts
+import type { User } from '@/types/user';
+import type { ApiResponse, PaginatedResponse } from '@/types/api';
+
+export async function getUsers(): Promise<PaginatedResponse<User>> {
+  // Implementation
+}
+```
+
+## Configuration Files
+
+### Keep Configuration at Root Level
+
+```typescript
+// ✅ Good: Configuration files in project root
+biome.jsonc              # Biome/Ultracite configuration
+components.json          # shadcn/ui configuration
+tsconfig.json           # TypeScript configuration
+next.config.ts          # Next.js configuration
+lefthook.yml           # Git hooks configuration
+
+// ✅ Good: Environment-specific configs in lib/
+lib/
+├── config/
+│   ├── database.ts     # Database configuration
+│   ├── auth.ts         # Auth configuration
+│   └── constants.ts    # App constants
+```
+
+## Asset Organization
+
+### Public Assets Structure
+
+```typescript
+// ✅ Good: Organized public assets
+public/
+├── icons/              # App icons and favicons
+│   ├── favicon.ico
+│   └── apple-touch-icon.png
+├── images/            # Static images
+│   ├── hero/
+│   ├── products/
+│   └── avatars/
+└── logos/             # Company/brand logos
+    ├── logo.svg
+    └── logo-dark.svg
+```
+
+## Development Workflow Files
+
+### Essential Dev Files
+
+- [package.json](mdc:package.json) - Dependencies and scripts
+- [pnpm-lock.yaml](mdc:pnpm-lock.yaml) - Lock file (never edit manually)
+- [lefthook.yml](mdc:lefthook.yml) - Git hooks for quality checks
+- [.cursor/rules/](mdc:.cursor/rules/) - Cursor AI rules directory
+
+### Scripts Usage
+
+```bash
+# ✅ Good: Use project scripts
+pnpm dev          # Development server with Turbopack
+pnpm build        # Production build
+pnpm start        # Production server
+pnpm format       # Ultracite format
+pnpm lint         # Ultracite lint
+pnpm type-check   # TypeScript check
+```
+
+## Code Organization Best Practices
+
+### Keep Files Focused and Small
+
+- **Components**: Ideally under 200 lines
+- **Utilities**: Single purpose functions
+- **Types**: Group related types together
+- **Hooks**: One hook per file unless tightly coupled
+
+### Use Barrel Exports Judiciously
+
+```typescript
+// ✅ Good: Barrel export for feature modules
+// components/user-profile/index.ts
+export { UserAvatar } from './UserAvatar';
+export { UserInfo } from './UserInfo';
+
+// ❌ Bad: Over-exporting everything
+// components/index.ts (exporting 50+ components)
+```
+
+### Consistent Error Handling Structure
+
+```typescript
+// ✅ Good: Consistent error boundary pattern
+// app/[feature]/error.tsx
+'use client';
+
+export default function FeatureError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h2>Something went wrong with this feature</h2>
+      <button onClick={() => reset()}>Try again</button>
+    </div>
+  );
+}
+```
+
+## Common Anti-Patterns to Avoid
+
+- ❌ Don't create deep nested folder structures (max 3-4 levels)
+- ❌ Don't mix different naming conventions in the same project
+- ❌ Don't put business logic in components - extract to hooks or utilities
+- ❌ Don't create giant "utils" files - split by functionality
+- ❌ Don't ignore the established path aliases (@/\* mappings)

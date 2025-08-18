@@ -1,0 +1,384 @@
+---
+description: Tailwind CSS v4 Conventions and Best Practices
+globs: '**/*.{ts,tsx,css}'
+---
+
+# Tailwind CSS v4 Rules
+
+This project uses Tailwind CSS v4 with CSS custom properties, modern features, and shadcn/ui design system integration.
+
+## Core Principles
+
+### CSS-First Approach
+
+Tailwind v4 embraces a CSS-first methodology with enhanced custom property support and better CSS integration.
+
+### Design System Integration
+
+All utilities work seamlessly with the shadcn/ui design tokens and CSS custom properties defined in [app/globals.css](mdc:app/globals.css).
+
+## Utility Class Patterns
+
+### Responsive Design
+
+```typescript
+// ✅ Good: Mobile-first responsive design
+<div className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4">
+  <Card className="p-4 md:p-6 lg:p-8">
+    <h2 className="text-lg md:text-xl lg:text-2xl font-semibold">
+      Responsive Title
+    </h2>
+  </Card>
+</div>
+
+// ✅ Good: Container queries (Tailwind v4 feature)
+<div className="@container">
+  <div className="grid @sm:grid-cols-2 @lg:grid-cols-3 gap-4">
+    {/* Content adapts to container size */}
+  </div>
+</div>
+```
+
+### Spacing and Layout
+
+```typescript
+// ✅ Good: Consistent spacing using design system tokens
+<div className="space-y-4 p-6">
+  <h1 className="text-2xl font-bold">Title</h1>
+  <p className="text-muted-foreground">Description</p>
+
+  <div className="flex items-center gap-3 pt-4">
+    <Button>Primary Action</Button>
+    <Button variant="outline">Secondary</Button>
+  </div>
+</div>
+
+// ✅ Good: Grid layouts
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {items.map(item => (
+    <Card key={item.id} className="p-4">
+      {/* Card content */}
+    </Card>
+  ))}
+</div>
+```
+
+### Color System Integration
+
+```typescript
+// ✅ Good: Use design system colors
+<div className="bg-background text-foreground">
+  <Card className="border-border bg-card text-card-foreground">
+    <CardHeader className="border-b border-border/50">
+      <CardTitle className="text-foreground">Title</CardTitle>
+      <CardDescription className="text-muted-foreground">
+        Subtitle text
+      </CardDescription>
+    </CardHeader>
+  </Card>
+</div>
+
+// ✅ Good: Semantic color usage
+<Alert className="border-destructive/50 text-destructive [&>svg]:text-destructive">
+  <AlertTriangle className="h-4 w-4" />
+  <AlertTitle>Error</AlertTitle>
+  <AlertDescription>Something went wrong</AlertDescription>
+</Alert>
+
+// ❌ Bad: Hard-coded colors that don't adapt to theme
+<div className="bg-red-500 text-white">
+  <p className="text-gray-600">This doesn't follow the design system</p>
+</div>
+```
+
+## Modern Tailwind v4 Features
+
+### Advanced Selectors
+
+```typescript
+// ✅ Good: Modern selector features
+<div className="group relative overflow-hidden rounded-lg">
+  <Image
+    src="/hero.jpg"
+    alt="Hero"
+    className="transition-transform duration-300 group-hover:scale-105"
+  />
+  <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/20">
+    <div className="absolute bottom-4 left-4 translate-y-2 opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100">
+      <h3 className="text-white font-semibold">Hover Title</h3>
+    </div>
+  </div>
+</div>
+
+// ✅ Good: Peer selectors for form validation
+<div>
+  <input
+    type="email"
+    className="peer w-full rounded border border-input bg-background px-3 py-2 invalid:border-destructive"
+    required
+  />
+  <p className="mt-1 text-sm text-destructive opacity-0 peer-invalid:opacity-100">
+    Please enter a valid email address
+  </p>
+</div>
+```
+
+### CSS Grid and Flexbox
+
+```typescript
+// ✅ Good: Modern grid layouts
+<div className="grid grid-cols-[200px_1fr_200px] gap-4 min-h-screen">
+  <aside className="bg-muted p-4">Sidebar</aside>
+  <main className="p-4">Main Content</main>
+  <aside className="bg-muted p-4">Right Sidebar</aside>
+</div>
+
+// ✅ Good: Flexible layouts
+<div className="flex flex-col h-screen">
+  <header className="flex-none bg-background border-b">
+    Header (fixed height)
+  </header>
+  <main className="flex-1 overflow-auto p-4">
+    Main content (grows to fill space)
+  </main>
+  <footer className="flex-none bg-muted p-4">
+    Footer (fixed height)
+  </footer>
+</div>
+```
+
+### Animation and Transitions
+
+```typescript
+// ✅ Good: Smooth animations
+<Button className="transform transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-95">
+  Interactive Button
+</Button>
+
+// ✅ Good: Loading states
+<div className="flex items-center gap-2">
+  <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+  <span>Loading...</span>
+</div>
+
+// ✅ Good: Stagger animations for lists
+<div className="space-y-2">
+  {items.map((item, index) => (
+    <div
+      key={item.id}
+      className="animate-in slide-in-from-left duration-300"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
+      {item.content}
+    </div>
+  ))}
+</div>
+```
+
+## Component-Specific Patterns
+
+### Form Styling
+
+```typescript
+// ✅ Good: Consistent form component styling
+<form className="space-y-6">
+  <div className="space-y-2">
+    <Label htmlFor="name">Full Name</Label>
+    <Input id="name" className="w-full" placeholder="Enter your full name" />
+  </div>
+
+  <div className="space-y-2">
+    <Label htmlFor="bio">Biography</Label>
+    <Textarea
+      id="bio"
+      className="min-h-[120px] resize-none"
+      placeholder="Tell us about yourself"
+    />
+  </div>
+
+  <div className="flex justify-end gap-3 pt-4 border-t">
+    <Button type="button" variant="outline">
+      Cancel
+    </Button>
+    <Button type="submit">Save Changes</Button>
+  </div>
+</form>
+```
+
+### Data Display
+
+```typescript
+// ✅ Good: Table styling
+<div className="overflow-hidden rounded-lg border">
+  <Table>
+    <TableHeader>
+      <TableRow className="hover:bg-transparent">
+        <TableHead className="w-[100px]">ID</TableHead>
+        <TableHead>Name</TableHead>
+        <TableHead>Email</TableHead>
+        <TableHead className="text-right">Actions</TableHead>
+      </TableRow>
+    </TableHeader>
+    <TableBody>
+      {users.map((user) => (
+        <TableRow key={user.id} className="hover:bg-muted/50">
+          <TableCell className="font-mono text-sm">{user.id}</TableCell>
+          <TableCell className="font-medium">{user.name}</TableCell>
+          <TableCell className="text-muted-foreground">{user.email}</TableCell>
+          <TableCell className="text-right">
+            <Button variant="ghost" size="sm">
+              Edit
+            </Button>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</div>
+```
+
+### Navigation Components
+
+```typescript
+// ✅ Good: Navigation styling
+<nav className="flex items-center space-x-6 px-6 py-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+  <div className="flex items-center space-x-2">
+    <Image src="/logo.svg" alt="Logo" width={32} height={32} />
+    <span className="font-bold text-xl">App Name</span>
+  </div>
+
+  <div className="flex items-center space-x-4 ml-auto">
+    <Button variant="ghost">Features</Button>
+    <Button variant="ghost">Pricing</Button>
+    <Button variant="ghost">About</Button>
+    <Button>Get Started</Button>
+  </div>
+</nav>
+```
+
+## Dark Mode and Theming
+
+### Automatic Dark Mode Support
+
+```typescript
+// ✅ Good: Theme-aware components (automatic with CSS custom properties)
+<Card className="bg-card text-card-foreground border-border">
+  <CardHeader>
+    <CardTitle>This adapts to light/dark mode automatically</CardTitle>
+    <CardDescription className="text-muted-foreground">
+      Using semantic color tokens
+    </CardDescription>
+  </CardHeader>
+</Card>
+
+// ✅ Good: Manual dark mode variants (when needed)
+<div className="bg-white text-black dark:bg-black dark:text-white">
+  <p>Manual light/dark variants</p>
+</div>
+```
+
+## Performance and Optimization
+
+### Efficient Class Usage
+
+```typescript
+// ✅ Good: Combine related utilities
+<div className="flex items-center justify-between p-4 bg-card rounded-lg border">
+  Content
+</div>
+
+// ❌ Bad: Overly verbose classes
+<div className="display-flex align-items-center justify-content-between padding-left-16px padding-right-16px padding-top-16px padding-bottom-16px background-color-card border-radius-8px border-width-1px border-style-solid border-color-border">
+  Content
+</div>
+```
+
+### Use Design Tokens
+
+```typescript
+// ✅ Good: Leverage design system spacing
+<div className="space-y-4">        {/* 1rem gap */}
+  <div className="space-y-2">      {/* 0.5rem gap */}
+    <h2 className="text-lg font-semibold">Title</h2>
+    <p className="text-sm text-muted-foreground">Description</p>
+  </div>
+</div>
+
+// ✅ Good: Consistent sizing scale
+<div className="w-8 h-8">          {/* 2rem */}
+<div className="w-10 h-10">        {/* 2.5rem */}
+<div className="w-12 h-12">        {/* 3rem */}
+```
+
+## CSS Custom Properties Integration
+
+### Component Theming
+
+```css
+/* ✅ Good: CSS custom properties in globals.css */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+  }
+}
+```
+
+### Using CSS Properties in Components
+
+```typescript
+// ✅ Good: CSS custom properties with Tailwind
+<div
+  className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
+  style={{
+    '--custom-height': '200px',
+    height: 'var(--custom-height)',
+  }}
+>
+  Custom property usage
+</div>
+```
+
+## Common Anti-Patterns to Avoid
+
+```typescript
+// ❌ Bad: Inline styles when Tailwind classes exist
+<div style={{ padding: '16px', margin: '8px', backgroundColor: 'red' }}>
+  Use Tailwind classes instead
+</div>
+
+// ❌ Bad: Arbitrary values when design tokens exist
+<div className="p-[16px] m-[8px] bg-[#ef4444]">
+  Use design system tokens: p-4 m-2 bg-destructive
+</div>
+
+// ❌ Bad: Overly specific selectors
+<div className="[&>div>p:nth-child(2)]:text-red-500">
+  Too complex - refactor component structure
+</div>
+
+// ❌ Bad: Mixing naming conventions
+<div className="flexBox itemsCenter spaceBetween paddingLarge">
+  Use Tailwind conventions: flex items-center justify-between p-6
+</div>
+```
+
+## Best Practices Summary
+
+1. **Use semantic color tokens** instead of hardcoded colors
+2. **Leverage responsive design** with mobile-first approach
+3. **Follow spacing scales** from the design system
+4. **Use CSS custom properties** for dynamic theming
+5. **Prefer Tailwind classes** over inline styles
+6. **Keep class lists readable** - use formatting tools
+7. **Use component variants** instead of conditional classes
+8. **Test in both light and dark modes**
