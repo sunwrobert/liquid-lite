@@ -5,6 +5,7 @@ import {
   type UseChangeAnimationOptions,
   useChangeAnimation,
 } from '@/hooks/use-change-animation';
+import { cn } from '@/lib/utils';
 import { Text } from './text';
 
 export type ChangeAnimationProps = UseChangeAnimationOptions & {
@@ -19,10 +20,7 @@ export function ChangeAnimation({
 }: ChangeAnimationProps) {
   const { animationClassName, rerenderKey } = useChangeAnimation({ ...rest });
   return (
-    <Text
-      className={`${animationClassName} ${className || ''}`.trim()}
-      key={rerenderKey}
-    >
+    <Text className={cn(animationClassName, className)} key={rerenderKey}>
       {children}
     </Text>
   );

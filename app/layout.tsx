@@ -13,6 +13,9 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Liquid Lite',
   description: 'A minimal Hyperliquid UI',
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
