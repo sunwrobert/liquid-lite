@@ -11,13 +11,21 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@privy-io/react-auth": "^2.21.3",
+    "@privy-io/wagmi": "^1.0.6",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@tanstack/react-query": "^5.85.3",
     "clsx": "^2.1.1",
+    "lightweight-charts": "^5.0.8",
     "lucide-react": "^0.539.0",
     "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "tailwind-merge": "^3.3.1",
-    "tailwind-variants": "^2.1.0"
+    "tailwind-variants": "^2.1.0",
+    "viem": "^2.33.3",
+    "wagmi": "^2.16.3",
+    "zod": "^4.0.17"
   },
   "devDependencies": {
     "@biomejs/biome": "2.2.0",
