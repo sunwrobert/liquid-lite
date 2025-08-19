@@ -2,6 +2,8 @@
 
 A minimal, fast, and modern trading interface for [Hyperliquid](https://hyperliquid.xyz) - a high-performance decentralized exchange for perpetual futures and spot trading.
 
+**[Demo](https://liquid-lite.vercel.app/)**
+
 ## Features
 
 ### Trading Interface
