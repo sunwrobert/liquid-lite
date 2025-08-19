@@ -8,7 +8,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Text } from './text';
 
-export type ChangeAnimationProps = UseChangeAnimationOptions & {
+type ChangeAnimationProps = UseChangeAnimationOptions & {
   children: React.ReactNode;
   className?: string;
 };

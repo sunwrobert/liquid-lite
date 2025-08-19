@@ -33,7 +33,7 @@ const buttonVariants = tv({
     {
       variant: 'ghost',
       size: 'sm',
-      className: 'px-2 py-1',
+      className: 'p-1',
     },
   ],
 });
@@ -59,4 +59,4 @@ function Button({
   );
 }
 
-export { Button, buttonVariants };
+export { Button };

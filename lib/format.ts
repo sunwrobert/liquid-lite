@@ -83,28 +83,3 @@ export function calculatePriceIncrements(currentPrice: number): number[] {
   // For very small prices (<0.01): 0.000001, 0.000002, 0.000005, 0.00001, 0.0001, 0.001
   return [0.000_001, 0.000_002, 0.000_005, 0.000_01, 0.0001, 0.001];
 }
-
-export function priceIncrementToNSigFigs(increment: number): {
-  nSigFigs: number;
-  mantissa?: number;
-} {
-  // Convert price increment to nSigFigs and mantissa for API calls
-  if (increment >= 1) {
-    return { nSigFigs: 2 };
-  }
-  if (increment >= 0.1) {
-    return { nSigFigs: 3 };
-  }
-  if (increment >= 0.01) {
-    return { nSigFigs: 4 };
-  }
-  // For smaller increments, use 5 sig figs with appropriate mantissa
-  const incrementStr = increment.toString();
-  if (incrementStr.includes('1')) {
-    return { nSigFigs: 5, mantissa: 1 };
-  }
-  if (incrementStr.includes('2')) {
-    return { nSigFigs: 5, mantissa: 2 };
-  }
-  return { nSigFigs: 5, mantissa: 5 };
-}

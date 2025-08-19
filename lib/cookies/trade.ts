@@ -26,7 +26,7 @@ const TradePreferencesSchema = z.object({
   asset: z.string().min(1),
   tradingType: TradingTypeSchema,
 });
-export type TradePreferences = z.infer<typeof TradePreferencesSchema>;
+type TradePreferences = z.infer<typeof TradePreferencesSchema>;
 
 const TradePreferencesStringSchema = z
   .string()
@@ -43,14 +43,12 @@ const TradePreferencesStringSchema = z
 const TRADE_PREFERENCES_COOKIE = 'trade-preferences';
 const CHART_INTERVAL_COOKIE = 'chart-interval';
 
-export const DEFAULT_TRADE_PREFERENCES: TradePreferences = {
+const DEFAULT_TRADE_PREFERENCES: TradePreferences = {
   asset: 'ETH',
   tradingType: 'perps',
 };
 
-export const DEFAULT_CHART_INTERVAL: CandleInterval = '1h';
-
-const COOKIE_MAX_AGE = Number.MAX_SAFE_INTEGER; // Effectively forever
+const DEFAULT_CHART_INTERVAL: CandleInterval = '1h';
 
 export async function getTradePreferences(): Promise<TradePreferences> {
   const cookieStore = await cookies();
@@ -64,20 +62,6 @@ export async function getTradePreferences(): Promise<TradePreferences> {
     preferenceCookie.value
   );
   return validated.success ? validated.data : DEFAULT_TRADE_PREFERENCES;
-}
-
-export async function setTradePreferences(
-  preferences: TradePreferences
-): Promise<void> {
-  const validated = TradePreferencesSchema.parse(preferences);
-
-  const cookieStore = await cookies();
-  cookieStore.set(TRADE_PREFERENCES_COOKIE, JSON.stringify(validated), {
-    maxAge: COOKIE_MAX_AGE,
-    httpOnly: false, // Allow client-side access if needed
-    sameSite: 'lax',
-    path: '/',
-  });
 }
 
 export async function getChartInterval(): Promise<CandleInterval> {

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const UniverseItemSchema = z.object({
+const UniverseItemSchema = z.object({
   szDecimals: z.number(),
   name: z.string(),
   maxLeverage: z.number(),
@@ -8,7 +8,7 @@ export const UniverseItemSchema = z.object({
   isDelisted: z.boolean().optional(),
 });
 
-export const AssetContextSchema = z.object({
+const AssetContextSchema = z.object({
   funding: z.string(),
   openInterest: z.string(),
   prevDayPx: z.string(),
@@ -21,7 +21,7 @@ export const AssetContextSchema = z.object({
   dayBaseVlm: z.string(),
 });
 
-export const SpotTokenSchema = z.object({
+const SpotTokenSchema = z.object({
   name: z.string(),
   szDecimals: z.number(),
   weiDecimals: z.number(),
@@ -33,14 +33,14 @@ export const SpotTokenSchema = z.object({
   deployerTradingFeeShare: z.string(),
 });
 
-export const SpotUniverseItemSchema = z.object({
+const SpotUniverseItemSchema = z.object({
   name: z.string(),
   tokens: z.array(z.number()),
   index: z.number(),
   isCanonical: z.boolean(),
 });
 
-export const SpotAssetContextSchema = z.object({
+const SpotAssetContextSchema = z.object({
   dayNtlVlm: z.string(),
   markPx: z.string(),
   midPx: z.string().nullable(),
@@ -68,7 +68,6 @@ export const SpotMetaAndAssetCtxsResponseSchema = z.tuple([
 ]);
 
 export type UniverseItem = z.infer<typeof UniverseItemSchema>;
-export type SpotToken = z.infer<typeof SpotTokenSchema>;
 export type SpotUniverseItem = z.infer<typeof SpotUniverseItemSchema>;
 export type AssetContext = z.infer<typeof AssetContextSchema>;
 export type SpotAssetContext = z.infer<typeof SpotAssetContextSchema>;
