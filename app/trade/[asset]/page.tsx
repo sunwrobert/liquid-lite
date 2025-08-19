@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { TradePage } from '@/components/trade/trade-page';
+import { getChartInterval } from '@/lib/cookies/trade';
 
 type AssetPerpsPageProps = {
   params: { asset: string };
@@ -15,6 +16,14 @@ export async function generateMetadata({
   };
 }
 
-export default function AssetPerpsPage({ params }: AssetPerpsPageProps) {
-  return <TradePage asset={params.asset} tradingType="perps" />;
+export default async function AssetPerpsPage({ params }: AssetPerpsPageProps) {
+  const initialInterval = await getChartInterval();
+
+  return (
+    <TradePage
+      asset={params.asset}
+      initialInterval={initialInterval}
+      tradingType="perps"
+    />
+  );
 }

@@ -13,7 +13,7 @@ const buttonVariants = tv({
       error: 'bg-error text-white shadow-xs hover:bg-error/90',
       secondary:
         'border bg-card text-card-foreground shadow-xs outline-border hover:bg-card/80',
-      ghost: 'hover:bg-accent hover:text-accent-foreground',
+      ghost: 'text-muted-foreground hover:text-foreground',
     },
     size: {
       sm: 'h-8 rounded-lg px-4 has-[>svg]:px-3',
@@ -29,6 +29,11 @@ const buttonVariants = tv({
       variant: 'secondary',
       size: 'sm',
       className: 'px-2',
+    },
+    {
+      variant: 'ghost',
+      size: 'sm',
+      className: 'px-2 py-1',
     },
   ],
 });

@@ -19,17 +19,12 @@ import {
 import { Text } from '@/components/ui/text';
 import { useL2Book } from '@/hooks/use-l2-book';
 import { useMetaAndAssetCtxs } from '@/hooks/use-meta-and-asset-ctxs';
-import type { TradingType } from '@/lib/cookies/trade';
 import {
   calculatePriceIncrements,
   formatNumber,
   formatPrice,
 } from '@/lib/format';
-
-type LiveOrderBookProps = {
-  asset: string;
-  tradingType: TradingType;
-};
+import { useTradeContext } from '@/providers/trade-provider';
 
 type OrderBookLevel = {
   price: number;
@@ -41,7 +36,8 @@ type OrderBookLevel = {
 
 type DisplayMode = 'usd' | 'asset';
 
-export function LiveOrderBook({ asset, tradingType }: LiveOrderBookProps) {
+export function LiveOrderBook() {
+  const { asset, tradingType } = useTradeContext();
   const [displayMode, setDisplayMode] = useState<DisplayMode>('usd');
   const [priceIncrementIndex, setPriceIncrementIndex] = useState(3); // Default to 4th increment
 
@@ -128,8 +124,8 @@ export function LiveOrderBook({ asset, tradingType }: LiveOrderBookProps) {
     }
 
     return {
-      asks: asks.slice(0, 12),
-      bids: bids.slice(0, 12),
+      asks: asks.slice(0, 11),
+      bids: bids.slice(0, 11),
       maxTotalUsd: Math.max(askTotalUsd, bidTotalUsd),
     };
   }, [rawOrderBook]);

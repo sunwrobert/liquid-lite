@@ -154,7 +154,7 @@ export function AssetSelectTable({
   return (
     <div className="scrollbar-hidden max-h-[400px] overflow-y-auto">
       <Table>
-        <TableHeader className="h-10 items-end">
+        <TableHeader className="h-9 items-end">
           <TableRow className="border-0">
             <TableHead>Symbol</TableHead>
             <TableHead>Last Price</TableHead>

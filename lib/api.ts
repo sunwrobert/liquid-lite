@@ -1,10 +1,16 @@
+import { z } from 'zod';
 import {
   type MetaAndAssetCtxsResponse,
   MetaAndAssetCtxsResponseSchema,
   type SpotMetaAndAssetCtxsResponse,
   SpotMetaAndAssetCtxsResponseSchema,
 } from './schemas';
-import { type L2BookData, L2BookDataSchema } from './websocket-schemas';
+import {
+  type Candle,
+  CandleSchema,
+  type L2BookData,
+  L2BookDataSchema,
+} from './websocket-schemas';
 
 const API_BASE_URL = 'https://api.hyperliquid.xyz';
 
@@ -101,6 +107,16 @@ export type L2BookRequest = {
   mantissa?: number;
 };
 
+export type CandleSnapshotRequest = {
+  type: 'candleSnapshot';
+  req: {
+    coin: string;
+    interval: string;
+    startTime: number;
+    endTime: number;
+  };
+};
+
 export type ApiRequest =
   | PerpDexsRequest
   | MetaRequest
@@ -118,7 +134,8 @@ export type ApiRequest =
   | SpotClearinghouseStateRequest
   | SpotDeployStateRequest
   | TokenDetailsRequest
-  | L2BookRequest;
+  | L2BookRequest
+  | CandleSnapshotRequest;
 
 // API Response type (generic since response varies by request type)
 export type ApiResponse<T = unknown> = T;
@@ -129,7 +146,6 @@ export type ApiError = {
   status?: number;
 };
 
-// Generic API function
 function apiRequest<T>(request: ApiRequest): Promise<T> {
   return fetch(`${API_BASE_URL}/info`, {
     method: 'POST',
@@ -247,4 +263,17 @@ export async function getL2Book(
 ): Promise<L2BookData> {
   const data = await apiRequest({ type: 'l2Book', coin, nSigFigs, mantissa });
   return L2BookDataSchema.parse(data);
+}
+
+export async function getCandleSnapshot(
+  coin: string,
+  interval: string,
+  startTime: number,
+  endTime: number
+): Promise<Candle[]> {
+  const data = await apiRequest({
+    type: 'candleSnapshot',
+    req: { coin, interval, startTime, endTime },
+  });
+  return z.array(CandleSchema).parse(data);
 }

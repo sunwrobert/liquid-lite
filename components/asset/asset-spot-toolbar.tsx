@@ -2,11 +2,7 @@
 
 import { Stat, StatLabel, StatValue } from '@/components/ui/stat';
 
-type AssetSpotToolbarProps = {
-  asset: string;
-};
-
-export function AssetSpotToolbar({ asset: _asset }: AssetSpotToolbarProps) {
+export function AssetSpotToolbar() {
   // TODO: Implement with spot market data hook when available
   // For now, show placeholder stats relevant to spot trading
 

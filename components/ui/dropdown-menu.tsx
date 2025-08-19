@@ -63,12 +63,10 @@ function DropdownMenuGroup({
 }
 
 const dropdownMenuItemVariants = tv({
-  base: "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden focus:bg-accent data-[disabled]:pointer-events-none data-[inset]:pl-8 data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  base: 'relative flex cursor-pointer select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
   variants: {
     variant: {
       default: '',
-      error:
-        '[&_svg]:!text-error text-error focus:bg-error/10 focus:text-error dark:focus:bg-error/20',
     },
   },
   defaultVariants: {

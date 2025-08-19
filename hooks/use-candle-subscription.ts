@@ -5,7 +5,7 @@ import type { Candle } from '@/lib/websocket-schemas';
 import { CandleSchema, SubCandleSchema } from '@/lib/websocket-schemas';
 import { useSubscription } from './use-subscription';
 
-type CandleInterval =
+export type CandleInterval =
   | '1m'
   | '3m'
   | '5m'
@@ -29,7 +29,10 @@ type UseCandleSubscriptionOptions = {
   onError?: (error: Error) => void;
 };
 
-const CandleResponseSchema = z.array(CandleSchema);
+const WsCandleResponseSchema = z.object({
+  channel: z.literal('candle'),
+  data: CandleSchema,
+});
 
 export function useCandleSubscription({
   coin,
@@ -49,9 +52,9 @@ export function useCandleSubscription({
 
   return useSubscription({
     subscriptionMessage,
-    responseSchema: CandleResponseSchema,
+    responseSchema: WsCandleResponseSchema,
     pause,
-    onResult,
+    onResult: (wsResponse) => onResult([wsResponse.data]),
     onError,
   });
 }

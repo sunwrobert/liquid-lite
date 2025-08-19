@@ -300,11 +300,11 @@ export const CandleSchema = z.object({
   T: z.number().int(),
   s: z.string(),
   i: z.string(),
-  o: z.number(),
-  c: z.number(),
-  h: z.number(),
-  l: z.number(),
-  v: z.number(),
+  o: z.coerce.number(),
+  c: z.coerce.number(),
+  h: z.coerce.number(),
+  l: z.coerce.number(),
+  v: z.coerce.number(),
   n: z.number().int(),
 });
 
