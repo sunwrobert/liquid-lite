@@ -8,7 +8,7 @@ import {
   type UTCTimestamp,
 } from 'lightweight-charts';
 import { ChevronDownIcon } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -59,7 +59,11 @@ export function TradingChart() {
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
 
-  const primaryIntervals = getPrimaryIntervals(interval);
+  // Memoize primary intervals calculation
+  const primaryIntervals = useMemo(
+    () => getPrimaryIntervals(interval),
+    [interval]
+  );
 
   const { data: candles } = useCandle({
     coin: asset,
@@ -130,18 +134,25 @@ export function TradingChart() {
     };
   }, []);
 
-  useEffect(() => {
-    if (!(seriesRef.current && candles?.length)) {
-      return;
+  // Memoize expensive chart data transformation
+  const chartData = useMemo(() => {
+    if (!candles?.length) {
+      return [];
     }
 
-    const chartData = candles.map((candle) => ({
+    return candles.map((candle) => ({
       time: (candle.t / 1000) as UTCTimestamp,
       open: candle.o,
       high: candle.h,
       low: candle.l,
       close: candle.c,
     }));
+  }, [candles]);
+
+  useEffect(() => {
+    if (!(seriesRef.current && chartData.length)) {
+      return;
+    }
 
     seriesRef.current.setData(chartData);
 
@@ -149,7 +160,7 @@ export function TradingChart() {
     if (chartRef.current) {
       chartRef.current.timeScale().fitContent();
     }
-  }, [candles]);
+  }, [chartData]);
 
   return (
     <Card className="h-full overflow-hidden p-0">

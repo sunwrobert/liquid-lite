@@ -1,5 +1,5 @@
+import { Text } from '@/components/ui/text';
 import { cn } from '@/lib/utils';
-import { Text } from './text';
 
 function Stat({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (

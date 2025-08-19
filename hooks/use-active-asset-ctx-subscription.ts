@@ -1,13 +1,13 @@
 'use client';
 
 import type { z } from 'zod';
+import { useSubscription } from '@/hooks/use-subscription';
 import {
   SubActiveAssetCtxSchema,
   type WsActiveAssetCtxDataSchema,
   WsActiveAssetCtxSchema,
   type WsActiveSpotAssetCtxDataSchema,
 } from '@/lib/websocket-schemas';
-import { useSubscription } from './use-subscription';
 
 type UseActiveAssetCtxSubscriptionOptions = {
   coin: string;

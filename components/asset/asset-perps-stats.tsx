@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { ChangeAnimation } from '@/components/ui/change-animation';
 import { Countdown } from '@/components/ui/countdown';
 import { Stat, StatLabel, StatValue } from '@/components/ui/stat';
@@ -11,59 +12,61 @@ type AssetPerpsStatsProps = {
   asset: string;
 };
 
-const PERCENTAGE_MULTIPLIER = 100;
-
 export function AssetPerpsStats({ asset }: AssetPerpsStatsProps) {
   const { data, isLoading, error } = useMetaAndAssetCtxs({
     asset,
   });
 
+  const assetKey = asset.toLowerCase();
+  const assetCtx = data?.assets[assetKey];
+
+  // Memoize expensive calculations
+  const calculations = useMemo(() => {
+    if (!assetCtx) {
+      return null;
+    }
+
+    const markPx = Number.parseFloat(assetCtx.markPx);
+    const prevDayPx = Number.parseFloat(assetCtx.prevDayPx);
+    const change24h = markPx - prevDayPx;
+    const changePercent24h = (change24h / prevDayPx) * 100;
+    const fundingRate = Number.parseFloat(assetCtx.funding);
+
+    // Calculate next hour for funding countdown
+    const now = new Date();
+    const nextHour = new Date(now);
+    nextHour.setHours(now.getHours() + 1, 0, 0, 0);
+
+    return {
+      markPx,
+      prevDayPx,
+      change24h,
+      changePercent24h,
+      fundingRate,
+      nextHour,
+    };
+  }, [assetCtx]);
+
   if (isLoading) {
     return null;
   }
 
-  if (error || !data) {
-    return (
-      <Stat>
-        <StatLabel>Error</StatLabel>
-        <StatValue>Failed to load data</StatValue>
-      </Stat>
-    );
-  }
-
-  const assetKey = asset.toLowerCase();
-  const assetCtx = data.assets[assetKey];
-
-  if (!assetCtx) {
+  if (error || !data || !assetCtx || !calculations) {
     return (
       <Stat>
         <StatLabel>Asset</StatLabel>
-        <StatValue>Not found</StatValue>
+        <StatValue>Error</StatValue>
       </Stat>
     );
   }
-
-  // Calculate 24h change
-  const markPx = Number.parseFloat(assetCtx.markPx);
-  const prevDayPx = Number.parseFloat(assetCtx.prevDayPx);
-  const change24h = markPx - prevDayPx;
-  const changePercent24h = (change24h / prevDayPx) * PERCENTAGE_MULTIPLIER;
-
-  // Format funding rate as percentage
-  const fundingRate = Number.parseFloat(assetCtx.funding);
-
-  // Calculate next hour for funding countdown
-  const now = new Date();
-  const nextHour = new Date(now);
-  nextHour.setHours(now.getHours() + 1, 0, 0, 0);
 
   return (
     <>
       <Stat>
         <StatLabel>Mark</StatLabel>
         <StatValue>
-          <ChangeAnimation value={markPx}>
-            {formatNumber(markPx, {
+          <ChangeAnimation value={calculations.markPx}>
+            {formatNumber(calculations.markPx, {
               display: 'standard',
               options: {
                 minimumSignificantDigits: 5,
@@ -84,8 +87,8 @@ export function AssetPerpsStats({ asset }: AssetPerpsStatsProps) {
       <Stat>
         <StatLabel>24h Change</StatLabel>
         <StatValue>
-          <StatChange change={change24h}>
-            {formatNumber(change24h, {
+          <StatChange change={calculations.change24h}>
+            {formatNumber(calculations.change24h, {
               display: 'standard',
               options: {
                 minimumSignificantDigits: 4,
@@ -93,7 +96,7 @@ export function AssetPerpsStats({ asset }: AssetPerpsStatsProps) {
               },
             })}{' '}
             /{' '}
-            {formatNumber(changePercent24h / PERCENTAGE_MULTIPLIER, {
+            {formatNumber(calculations.changePercent24h / 100, {
               display: 'percent',
             })}
           </StatChange>
@@ -118,15 +121,15 @@ export function AssetPerpsStats({ asset }: AssetPerpsStatsProps) {
       <Stat>
         <StatLabel>Funding / Countdown</StatLabel>
         <StatValue className="flex items-center gap-2">
-          <StatChange change={fundingRate} contrast>
-            {formatNumber(fundingRate, {
+          <StatChange change={calculations.fundingRate} contrast>
+            {formatNumber(calculations.fundingRate, {
               display: 'percent',
               options: {
                 maximumSignificantDigits: 2,
               },
             })}
           </StatChange>
-          <Countdown target={nextHour} />
+          <Countdown target={calculations.nextHour} />
         </StatValue>
       </Stat>
     </>

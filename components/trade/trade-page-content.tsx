@@ -5,13 +5,13 @@ import { Suspense } from 'react';
 import { AssetPerpsToolbar } from '@/components/asset/asset-perps-toolbar';
 import { AssetSpotToolbar } from '@/components/asset/asset-spot-toolbar';
 import { AssetToolbar } from '@/components/asset/asset-toolbar';
+import { LiveOrderBook } from '@/components/trade/widgets/live-order-book';
+import { LiveTrades } from '@/components/trade/widgets/live-trades';
+import { TradingChart } from '@/components/trade/widgets/trading-chart';
+import { Card } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTradeContext } from '@/providers/trade-provider';
-import { Card } from '../ui/card';
-import { Separator } from '../ui/separator';
-import { LiveOrderBook } from './widgets/live-order-book';
-import { LiveTrades } from './widgets/live-trades';
-import { TradingChart } from './widgets/trading-chart';
 
 const CHART_HEIGHT = 568;
 

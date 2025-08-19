@@ -2,9 +2,9 @@
 
 import { useEffect } from 'react';
 import { setCookie } from 'react-use-cookie';
+import { TradePageContent } from '@/components/trade/trade-page-content';
 import type { CandleInterval, TradingType } from '@/lib/cookies/trade';
 import { TradeProvider } from '@/providers/trade-provider';
-import { TradePageContent } from './trade-page-content';
 
 type TradePageProps = {
   asset: string;

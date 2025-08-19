@@ -5,8 +5,8 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useTradesSubscription } from '@/hooks/use-trades-subscription';
 import type { WsTrade } from '@/lib/websocket-schemas';
-import { useTradesSubscription } from './use-trades-subscription';
 
 type UseTradesOptions = {
   coin: string;

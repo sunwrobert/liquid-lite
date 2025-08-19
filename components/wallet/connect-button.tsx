@@ -1,8 +1,9 @@
 'use client';
 
 import { usePrivy } from '@privy-io/react-auth';
+import { Button } from '@/components/ui/button';
+import { Text } from '@/components/ui/text';
 import { formatAddress } from '@/lib/address';
-import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +11,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { Text } from '../ui/text';
 
 export function ConnectButton() {
   const { ready, authenticated, user, login, logout } = usePrivy();

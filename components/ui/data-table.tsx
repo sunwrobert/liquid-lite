@@ -11,9 +11,14 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
 import type * as React from 'react';
 import { useRef, useState } from 'react';
-
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { cn } from '@/lib/utils';
-import { Table, TableBody, TableHead, TableHeader, TableRow } from './table';
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
@@ -167,7 +172,7 @@ export function DataTable<TData, TValue>({
                       }}
                     >
                       {row.getVisibleCells().map((cell) => (
-                        <td
+                        <div
                           className="flex h-full flex-1 items-center whitespace-nowrap text-xs [&:first-child]:pl-2.5 [&:last-child]:pr-2.5"
                           key={cell.id}
                         >
@@ -175,7 +180,7 @@ export function DataTable<TData, TValue>({
                             cell.column.columnDef.cell,
                             cell.getContext()
                           )}
-                        </td>
+                        </div>
                       ))}
                     </TableRow>
                   );
@@ -229,23 +234,23 @@ export function DataTable<TData, TValue>({
                 onClick={() => onRowClick?.(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <td
+                  <div
                     className="flex h-6 flex-1 items-center whitespace-nowrap text-xs [&:first-child]:pl-2.5 [&:last-child]:pr-2.5"
                     key={cell.id}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
+                  </div>
                 ))}
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <td
+              <div
                 className="h-24 text-center"
                 style={{ gridColumn: `span ${columns.length}` }}
               >
                 No results.
-              </td>
+              </div>
             </TableRow>
           )}
         </TableBody>

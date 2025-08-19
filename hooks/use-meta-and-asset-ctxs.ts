@@ -7,13 +7,13 @@ import {
 } from '@tanstack/react-query';
 import { keyBy } from 'es-toolkit';
 import type { z } from 'zod';
+import { useActiveAssetCtxSubscription } from '@/hooks/use-active-asset-ctx-subscription';
 import { getMetaAndAssetCtxs } from '@/lib/api';
 import type { AssetContext, MetaAndAssetCtxsResponse } from '@/lib/schemas';
 import type {
   WsActiveAssetCtxDataSchema,
   WsActiveSpotAssetCtxDataSchema,
 } from '@/lib/websocket-schemas';
-import { useActiveAssetCtxSubscription } from './use-active-asset-ctx-subscription';
 
 const SECONDS_TO_MS = 1000;
 const MARKET_DATA_REFRESH_SECONDS = 30;

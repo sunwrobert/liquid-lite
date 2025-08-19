@@ -1,9 +1,9 @@
 'use client';
 
 import { z } from 'zod';
+import { useSubscription } from '@/hooks/use-subscription';
 import type { Candle } from '@/lib/websocket-schemas';
 import { CandleSchema, SubCandleSchema } from '@/lib/websocket-schemas';
-import { useSubscription } from './use-subscription';
 
 export type CandleInterval =
   | '1m'

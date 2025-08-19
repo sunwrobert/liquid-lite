@@ -5,9 +5,9 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+import { useL2BookSubscription } from '@/hooks/use-l2-book-subscription';
 import { getL2Book } from '@/lib/api';
 import type { L2BookData, WsBook } from '@/lib/websocket-schemas';
-import { useL2BookSubscription } from './use-l2-book-subscription';
 
 type UseL2BookOptions = {
   coin: string;

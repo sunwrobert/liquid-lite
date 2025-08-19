@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronDownIcon } from 'lucide-react';
-
+import { AssetSelectContent } from '@/components/asset/asset-selector/asset-select-content';
 import { CoinIcon } from '@/components/icons/coin-icon';
 import {
   Popover,
@@ -12,7 +12,6 @@ import { Text } from '@/components/ui/text';
 import { useMetaAndAssetCtxs } from '@/hooks/use-meta-and-asset-ctxs';
 import { useSpotMetaAndAssetCtxs } from '@/hooks/use-spot-meta-and-asset-ctxs';
 import { useTradeContext } from '@/providers/trade-provider';
-import { AssetSelectContent } from './asset-select-content';
 
 type AssetSelectProps = {
   selectedAsset: string;
