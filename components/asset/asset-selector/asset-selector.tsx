@@ -11,6 +11,7 @@ import {
 import { Text } from '@/components/ui/text';
 import { useMetaAndAssetCtxs } from '@/hooks/use-meta-and-asset-ctxs';
 import { useSpotMetaAndAssetCtxs } from '@/hooks/use-spot-meta-and-asset-ctxs';
+import { useTradeContext } from '@/providers/trade-provider';
 import { AssetSelectContent } from './asset-select-content';
 
 type AssetSelectProps = {
@@ -18,6 +19,8 @@ type AssetSelectProps = {
 };
 
 export function AssetSelector({ selectedAsset }: AssetSelectProps) {
+  const { tradingType } = useTradeContext();
+
   // Start loading assets immediately, even before popover opens
   useMetaAndAssetCtxs({
     queryOptions: {
@@ -40,7 +43,11 @@ export function AssetSelector({ selectedAsset }: AssetSelectProps) {
         >
           <div className="flex items-center gap-2">
             <CoinIcon coin={selectedAsset} size={20} />
-            <Text className="font-medium text-xl">{selectedAsset}</Text>
+            <Text className="font-medium text-xl">
+              {tradingType === 'spot'
+                ? `${selectedAsset}/USDC`
+                : `${selectedAsset}-USD`}
+            </Text>
           </div>
           <ChevronDownIcon className="transition-transform" size={20} />
         </button>

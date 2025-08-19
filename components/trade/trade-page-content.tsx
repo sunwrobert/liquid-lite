@@ -18,9 +18,9 @@ const CHART_HEIGHT = 568;
 export function TradePageContent() {
   const { asset, tradingType, interval } = useTradeContext();
   return (
-    <div className="grid h-full grid-cols-12 gap-1">
-      {/* Left side - Asset toolbar and chart (7 columns) */}
-      <div className="col-span-7 flex h-full flex-col gap-1">
+    <div className="grid h-full grid-cols-1 gap-1 md:grid-cols-12">
+      {/* Left side - Asset toolbar and chart (7 columns on tablet+, full width on mobile) */}
+      <div className="col-span-1 flex h-full flex-col gap-1 md:col-span-7">
         {/* Asset Toolbar */}
         <AssetToolbar>
           {tradingType === 'perps' ? (
@@ -42,8 +42,8 @@ export function TradePageContent() {
         </div>
       </div>
 
-      {/* Right side - Tabbed widgets (5 columns) */}
-      <div className="col-span-5 h-full">
+      {/* Right side - Tabbed widgets (5 columns on tablet+, full width on mobile) */}
+      <div className="col-span-1 h-full md:col-span-5">
         <Card className="px-0 py-1" style={{ minHeight: `${CHART_HEIGHT}px` }}>
           <Tabs className="flex h-full flex-col gap-0" defaultValue="orderbook">
             <div className="flex">

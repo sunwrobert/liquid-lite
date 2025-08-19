@@ -14,10 +14,12 @@ function DropdownMenu({
 }
 
 function DropdownMenuTrigger({
+  className,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
   return (
     <DropdownMenuPrimitive.Trigger
+      className={cn('focus-visible:outline-none', className)}
       data-slot="dropdown-menu-trigger"
       {...props}
     />
