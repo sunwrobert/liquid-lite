@@ -52,7 +52,7 @@ export function AssetSelector({ selectedAsset }: AssetSelectProps) {
           <ChevronDownIcon className="transition-transform" size={20} />
         </button>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="fixed inset-0 h-screen w-screen max-w-screen rounded-none border-0 p-0 md:relative md:inset-auto md:h-auto md:w-auto md:max-w-none md:rounded-md md:border md:p-1">
         <AssetSelectContent />
       </PopoverContent>
     </Popover>

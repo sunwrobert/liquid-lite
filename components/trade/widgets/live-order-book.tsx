@@ -215,12 +215,12 @@ export function LiveOrderBook() {
                     className="relative hover:bg-muted/10"
                     key={`ask-${ask.price}-${index}`}
                   >
-                    <TableCell className="relative text-error">
+                    <div
+                      className="absolute inset-0 bg-error/20"
+                      style={{ width: `${fillPercentage}%` }}
+                    />
+                    <TableCell className="relative pl-2 text-error">
                       {formatPrice(ask.price)}
-                      <div
-                        className="absolute inset-y-0 left-0 bg-error/20"
-                        style={{ width: `${fillPercentage}%` }}
-                      />
                     </TableCell>
                     <TableCell className="relative justify-end text-right">
                       {formatNumber(displaySize, { display: 'standard' })}
@@ -253,13 +253,12 @@ export function LiveOrderBook() {
                   className="relative hover:bg-muted/10"
                   key={`bid-${bid.price}-${index}`}
                 >
-                  <TableCell className="relative text-success">
+                  <div
+                    className="absolute inset-0 bg-success/20"
+                    style={{ width: `${fillPercentage}%` }}
+                  />
+                  <TableCell className="relative pl-2 text-success">
                     {formatPrice(bid.price)}
-
-                    <div
-                      className="absolute inset-y-0 left-0 bg-success/20"
-                      style={{ width: `${fillPercentage}%` }}
-                    />
                   </TableCell>
                   <TableCell className="relative justify-end text-right">
                     {formatNumber(displaySize, { display: 'standard' })}
