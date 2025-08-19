@@ -154,26 +154,14 @@ export function AssetSelectTable({
   return (
     <div className="scrollbar-hidden max-h-[400px] overflow-y-auto">
       <Table>
-        <TableHeader>
+        <TableHeader className="h-10 items-end">
           <TableRow className="border-0">
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">Symbol</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">Last Price</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">24h Change</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">8hr Funding</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">Volume</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">Open Interest</Text>
-            </TableHead>
+            <TableHead>Symbol</TableHead>
+            <TableHead>Last Price</TableHead>
+            <TableHead>24h Change</TableHead>
+            <TableHead>8hr Funding</TableHead>
+            <TableHead>Volume</TableHead>
+            <TableHead>Open Interest</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

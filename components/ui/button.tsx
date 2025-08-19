@@ -24,6 +24,13 @@ const buttonVariants = tv({
     variant: 'default',
     size: 'sm',
   },
+  compoundVariants: [
+    {
+      variant: 'secondary',
+      size: 'sm',
+      className: 'px-2',
+    },
+  ],
 });
 
 function Button({

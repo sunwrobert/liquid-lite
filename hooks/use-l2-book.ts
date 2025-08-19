@@ -6,20 +6,14 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import { getL2Book } from '@/lib/api';
-import type { WsBook } from '@/lib/websocket-schemas';
+import type { L2BookData, WsBook } from '@/lib/websocket-schemas';
 import { useL2BookSubscription } from './use-l2-book-subscription';
-
-const SECONDS_TO_MS = 1000;
-const ORDER_BOOK_REFRESH_SECONDS = 1;
-const ORDER_BOOK_STALE_TIME_MS = ORDER_BOOK_REFRESH_SECONDS * SECONDS_TO_MS;
-const ORDER_BOOK_REFETCH_INTERVAL_MS =
-  ORDER_BOOK_REFRESH_SECONDS * SECONDS_TO_MS;
 
 type UseL2BookOptions = {
   coin: string;
   nSigFigs?: number;
   mantissa?: number;
-  queryOptions?: Partial<UseQueryOptions<WsBook>>;
+  queryOptions?: Partial<UseQueryOptions<L2BookData>>;
 };
 
 export function useL2Book({
@@ -37,22 +31,24 @@ export function useL2Book({
     mantissa,
     pause: !coin,
     onResult: (data: WsBook) => {
-      queryClient.setQueryData<WsBook>(
+      queryClient.setQueryData<L2BookData>(
         ['l2Book', coin, nSigFigs, mantissa],
-        data
+        data.data
       );
     },
   });
 
-  return useQuery<WsBook>({
+  return useQuery<L2BookData>({
     queryKey: ['l2Book', coin, nSigFigs, mantissa],
     // biome-ignore lint/suspicious/useAwait: this is fine
-    queryFn: async (): Promise<WsBook> => {
+    queryFn: async (): Promise<L2BookData> => {
       return getL2Book(coin, nSigFigs, mantissa);
     },
     enabled: !!coin,
-    staleTime: ORDER_BOOK_STALE_TIME_MS,
-    refetchInterval: ORDER_BOOK_REFETCH_INTERVAL_MS,
+    staleTime: Number.POSITIVE_INFINITY, // Never consider data stale since we have real-time updates
+    refetchOnWindowFocus: false, // Don't refetch on window focus
+    refetchOnReconnect: false, // Don't refetch on reconnect
+    refetchInterval: false, // Disable periodic refetching
     ...queryOptions,
   });
 }

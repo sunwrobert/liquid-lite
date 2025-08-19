@@ -8,15 +8,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { Text } from '@/components/ui/text';
 import { useL2Book } from '@/hooks/use-l2-book';
 import { useMetaAndAssetCtxs } from '@/hooks/use-meta-and-asset-ctxs';
 import type { TradingType } from '@/lib/cookies/trade';
 import {
   calculatePriceIncrements,
+  formatNumber,
   formatPrice,
-  formatVolume,
-  priceIncrementToNSigFigs,
 } from '@/lib/format';
 
 type LiveOrderBookProps = {
@@ -45,27 +52,20 @@ export function LiveOrderBook({ asset, tradingType }: LiveOrderBookProps) {
   const assetContext = metaData?.assets[asset.toLowerCase()];
   const currentPrice = assetContext
     ? Number.parseFloat(assetContext.markPx)
-    : 0;
+    : null;
 
-  // Calculate dynamic price increments based on current price
+  // Calculate dynamic price increments based on current price (for display only)
   const priceIncrements = useMemo(
-    () => calculatePriceIncrements(currentPrice),
+    () =>
+      currentPrice !== null
+        ? calculatePriceIncrements(currentPrice)
+        : [0.01, 0.02, 0.05, 0.1, 1, 10],
     [currentPrice]
-  );
-  const selectedIncrement =
-    priceIncrements[priceIncrementIndex] ?? priceIncrements[3] ?? 0.01;
-
-  // Convert increment to API parameters
-  const { nSigFigs, mantissa } = useMemo(
-    () => priceIncrementToNSigFigs(selectedIncrement),
-    [selectedIncrement]
   );
 
   // Use React Query hook to fetch and subscribe to order book data
   const { data: rawOrderBook } = useL2Book({
     coin: asset,
-    nSigFigs,
-    mantissa,
   });
 
   const orderBook = useMemo(() => {
@@ -73,7 +73,7 @@ export function LiveOrderBook({ asset, tradingType }: LiveOrderBookProps) {
       return { asks: [], bids: [], maxTotalUsd: 0 };
     }
 
-    const [askLevels, bidLevels] = rawOrderBook.levels;
+    const [bidLevels, askLevels] = rawOrderBook.levels;
     const asks: OrderBookLevel[] = [];
     const bids: OrderBookLevel[] = [];
     let askTotalUsd = 0;
@@ -81,9 +81,9 @@ export function LiveOrderBook({ asset, tradingType }: LiveOrderBookProps) {
     let askTotalAsset = 0;
     let bidTotalAsset = 0;
 
-    // Process asks (sell orders) - sort by price descending (highest to lowest)
+    // Process asks (sell orders) - sort by price ascending (lowest to highest) since we reverse the display
     const sortedAsks = [...askLevels].sort(
-      (a, b) => Number.parseFloat(b.px) - Number.parseFloat(a.px)
+      (a, b) => Number.parseFloat(a.px) - Number.parseFloat(b.px)
     );
     for (const level of sortedAsks) {
       if (level?.px && level.sz) {
@@ -190,118 +190,115 @@ export function LiveOrderBook({ asset, tradingType }: LiveOrderBookProps) {
         </Select>
       </div>
 
-      {/* Table Headers */}
-      <div className="border-b px-3 py-2">
-        <div className="grid grid-cols-3 gap-2 font-medium text-muted-foreground text-xs">
-          <span>Price ({pairedCoin})</span>
-          <span className="text-right">
-            Size ({displayMode === 'usd' ? pairedCoin : asset})
-          </span>
-          <span className="text-right">
-            Total ({displayMode === 'usd' ? pairedCoin : asset})
-          </span>
-        </div>
-      </div>
-
       <div className="flex-1 overflow-hidden">
-        <div className="flex h-full flex-col">
-          {/* Asks */}
-          <div className="flex flex-col-reverse overflow-y-auto">
-            {orderBook.asks.map((ask, index) => {
-              const displaySize =
-                displayMode === 'usd' ? ask.sizeUsd : ask.sizeAsset;
-              const displayTotal =
-                displayMode === 'usd' ? ask.totalUsd : ask.totalAsset;
-              const maxTotal =
-                displayMode === 'usd'
-                  ? orderBook.maxTotalUsd
-                  : Math.max(
-                      ...orderBook.asks.map((a) => a.totalAsset),
-                      ...orderBook.bids.map((b) => b.totalAsset)
-                    );
-              const fillPercentage =
-                maxTotal > 0 ? (displaySize / maxTotal) * 100 : 0;
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Price ({pairedCoin})</TableHead>
+              <TableHead className="justify-end text-right">
+                Size ({displayMode === 'usd' ? pairedCoin : asset})
+              </TableHead>
+              <TableHead className="justify-end text-right">
+                Total ({displayMode === 'usd' ? pairedCoin : asset})
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {/* Asks */}
+            {orderBook.asks
+              .slice()
+              .reverse()
+              .map((ask, index) => {
+                const displaySize =
+                  displayMode === 'usd' ? ask.sizeUsd : ask.sizeAsset;
+                const displayTotal =
+                  displayMode === 'usd' ? ask.totalUsd : ask.totalAsset;
 
-              return (
-                <div
-                  className="relative grid grid-cols-3 gap-2 px-3 py-1 text-xs hover:bg-muted/10"
-                  key={`ask-${ask.price}-${index}`}
-                  style={{
-                    background: `linear-gradient(to left, hsl(var(--error) / ${Math.max(0.05, (fillPercentage / 100) * 0.3)}) ${fillPercentage}%, transparent ${fillPercentage}%)`,
-                  }}
-                >
-                  <span className="relative z-10 text-error">
-                    {formatPrice(ask.price)}
-                  </span>
-                  <span className="relative z-10 text-right">
-                    {displayMode === 'usd'
-                      ? formatVolume(displaySize)
-                      : displaySize.toFixed(4)}
-                  </span>
-                  <span className="relative z-10 text-right">
-                    {displayMode === 'usd'
-                      ? formatVolume(displayTotal)
-                      : displayTotal.toFixed(4)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                // Calculate max size for proper percentage scaling
+                const maxSize = Math.max(
+                  ...orderBook.asks.map((a) =>
+                    displayMode === 'usd' ? a.sizeUsd : a.sizeAsset
+                  ),
+                  ...orderBook.bids.map((b) =>
+                    displayMode === 'usd' ? b.sizeUsd : b.sizeAsset
+                  )
+                );
+                const fillPercentage =
+                  maxSize > 0 ? (displaySize / maxSize) * 100 : 0;
 
-          {/* Spread */}
-          <div className="flex items-center justify-around border-y bg-border py-1">
-            <Text className="text-foreground text-xs">Spread</Text>
-            <Text className="text-foreground text-xs">
-              {formatPrice(spread)}
-            </Text>
-            <Text className="text-foreground text-xs">
-              {spreadPercent.toFixed(3)}%
-            </Text>
-          </div>
+                return (
+                  <TableRow
+                    className="relative hover:bg-muted/10"
+                    key={`ask-${ask.price}-${index}`}
+                  >
+                    <div
+                      className="absolute inset-y-0 left-0 bg-error/20"
+                      style={{ width: `${fillPercentage}%` }}
+                    />
+                    <TableCell className="relative text-error">
+                      {formatPrice(ask.price)}
+                    </TableCell>
+                    <TableCell className="relative justify-end text-right">
+                      {formatNumber(displaySize, { display: 'standard' })}
+                    </TableCell>
+                    <TableCell className="relative justify-end text-right">
+                      {formatNumber(displayTotal, { display: 'standard' })}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
 
-          {/* Bids */}
-          <div className="overflow-y-auto">
+            {/* Spread */}
+            <div className="flex w-full justify-center gap-8 bg-border py-1">
+              <Text className="text-foreground text-xs">Spread</Text>
+              <Text className="text-foreground text-xs">
+                {formatPrice(spread)}
+              </Text>
+              <Text className="text-foreground text-xs">
+                {formatNumber(spreadPercent, { display: 'percent' })}
+              </Text>
+            </div>
+
+            {/* Bids */}
             {orderBook.bids.map((bid, index) => {
               const displaySize =
                 displayMode === 'usd' ? bid.sizeUsd : bid.sizeAsset;
               const displayTotal =
                 displayMode === 'usd' ? bid.totalUsd : bid.totalAsset;
-              const maxTotal =
-                displayMode === 'usd'
-                  ? orderBook.maxTotalUsd
-                  : Math.max(
-                      ...orderBook.asks.map((a) => a.totalAsset),
-                      ...orderBook.bids.map((b) => b.totalAsset)
-                    );
+              const maxSize = Math.max(
+                ...orderBook.asks.map((a) =>
+                  displayMode === 'usd' ? a.sizeUsd : a.sizeAsset
+                ),
+                ...orderBook.bids.map((b) =>
+                  displayMode === 'usd' ? b.sizeUsd : b.sizeAsset
+                )
+              );
               const fillPercentage =
-                maxTotal > 0 ? (displaySize / maxTotal) * 100 : 0;
+                maxSize > 0 ? (displaySize / maxSize) * 100 : 0;
 
               return (
-                <div
-                  className="relative grid grid-cols-3 gap-2 px-3 py-1 text-xs hover:bg-muted/10"
+                <TableRow
+                  className="relative hover:bg-muted/10"
                   key={`bid-${bid.price}-${index}`}
-                  style={{
-                    background: `linear-gradient(to left, hsl(var(--success) / ${Math.max(0.05, (fillPercentage / 100) * 0.3)}) ${fillPercentage}%, transparent ${fillPercentage}%)`,
-                  }}
                 >
-                  <span className="relative z-10 text-success">
+                  <div
+                    className="absolute inset-y-0 left-0 bg-success/20"
+                    style={{ width: `${fillPercentage}%` }}
+                  />
+                  <TableCell className="relative text-success">
                     {formatPrice(bid.price)}
-                  </span>
-                  <span className="relative z-10 text-right">
-                    {displayMode === 'usd'
-                      ? formatVolume(displaySize)
-                      : displaySize.toFixed(4)}
-                  </span>
-                  <span className="relative z-10 text-right">
-                    {displayMode === 'usd'
-                      ? formatVolume(displayTotal)
-                      : displayTotal.toFixed(4)}
-                  </span>
-                </div>
+                  </TableCell>
+                  <TableCell className="relative justify-end text-right">
+                    {formatNumber(displaySize, { display: 'standard' })}
+                  </TableCell>
+                  <TableCell className="relative justify-end text-right">
+                    {formatNumber(displayTotal, { display: 'standard' })}
+                  </TableCell>
+                </TableRow>
               );
             })}
-          </div>
-        </div>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

@@ -308,10 +308,17 @@ export const CandleSchema = z.object({
   n: z.number().int(),
 });
 
-export const WsBookSchema = z.object({
+// L2 Book data schema (the actual book data)
+export const L2BookDataSchema = z.object({
   coin: z.string(),
   levels: z.array(z.array(WsLevelSchema)),
   time: z.number().int(),
+});
+
+// L2 Book websocket message schema (includes channel wrapper)
+export const WsBookSchema = z.object({
+  channel: z.literal('l2Book'),
+  data: L2BookDataSchema,
 });
 
 export const WsUserEventSchema = z.union([
@@ -554,6 +561,7 @@ export type AllMids = z.infer<typeof AllMidsSchema>;
 export type Notification = z.infer<typeof NotificationSchema>;
 export type WebData2 = z.infer<typeof WebData2Schema>;
 export type Candle = z.infer<typeof CandleSchema>;
+export type L2BookData = z.infer<typeof L2BookDataSchema>;
 export type WsBook = z.infer<typeof WsBookSchema>;
 export type WsUserEvent = z.infer<typeof WsUserEventSchema>;
 export type WsUserFills = z.infer<typeof WsUserFillsSchema>;

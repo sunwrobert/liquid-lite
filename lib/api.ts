@@ -4,7 +4,7 @@ import {
   type SpotMetaAndAssetCtxsResponse,
   SpotMetaAndAssetCtxsResponseSchema,
 } from './schemas';
-import { type WsBook, WsBookSchema } from './websocket-schemas';
+import { type L2BookData, L2BookDataSchema } from './websocket-schemas';
 
 const API_BASE_URL = 'https://api.hyperliquid.xyz';
 
@@ -244,7 +244,7 @@ export async function getL2Book(
   coin: string,
   nSigFigs?: number,
   mantissa?: number
-): Promise<WsBook> {
+): Promise<L2BookData> {
   const data = await apiRequest({ type: 'l2Book', coin, nSigFigs, mantissa });
-  return WsBookSchema.parse(data);
+  return L2BookDataSchema.parse(data);
 }

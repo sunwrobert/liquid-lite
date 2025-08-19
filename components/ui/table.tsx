@@ -1,63 +1,78 @@
+/** biome-ignore-all lint/a11y/useFocusableInteractive: this is a table */
+/** biome-ignore-all lint/a11y/useSemanticElements: this is a table */
 'use client';
 
 import type * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-function Table({ className, ...props }: React.ComponentProps<'table'>) {
+function Table({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
-      className="relative w-full overflow-x-auto"
-      data-slot="table-container"
-    >
-      <table
-        className={cn('w-full caption-bottom text-sm', className)}
-        data-slot="table"
-        {...props}
-      />
-    </div>
-  );
-}
-
-function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
-  return <thead className={className} data-slot="table-header" {...props} />;
-}
-
-function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
-  return <tbody className={className} data-slot="table-body" {...props} />;
-}
-
-function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
-  return (
-    <tr
-      className={cn('border-b transition-colors', className)}
-      data-slot="table-row"
+      className={cn('flex w-full flex-col gap-0.5 text-sm', className)}
+      data-slot="table"
+      role="table"
       {...props}
     />
   );
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
+function TableHeader({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <th
+    <div
+      className={cn('flex w-full', className)}
+      data-slot="table-header"
+      role="rowgroup"
+      {...props}
+    />
+  );
+}
+
+function TableBody({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      className={cn('flex w-full flex-col gap-0.5', className)}
+      data-slot="table-body"
+      role="rowgroup"
+      {...props}
+    />
+  );
+}
+
+function TableRow({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      className={cn('flex w-full transition-colors', className)}
+      data-slot="table-row"
+      role="row"
+      {...props}
+    />
+  );
+}
+
+function TableHead({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
       className={cn(
-        'h-10 whitespace-nowrap px-2 text-left align-middle font-medium text-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+        'flex-1 whitespace-nowrap px-2 font-medium text-muted-foreground text-xs first:pl-2.5 last:pr-2.5',
         className
       )}
       data-slot="table-head"
+      role="columnheader"
       {...props}
     />
   );
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
+function TableCell({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <td
+    <div
       className={cn(
-        'whitespace-nowrap p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]',
+        'flex h-6 flex-1 items-center whitespace-nowrap px-2 text-xs first:pl-2.5 last:pr-2.5',
         className
       )}
       data-slot="table-cell"
+      role="cell"
       {...props}
     />
   );

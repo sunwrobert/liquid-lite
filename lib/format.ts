@@ -49,26 +49,6 @@ export function formatPrice(price: string | number): string {
   }).format(numPrice);
 }
 
-export function formatVolume(volume: string | number): string {
-  const numVolume =
-    typeof volume === 'string' ? Number.parseFloat(volume) : volume;
-  if (Number.isNaN(numVolume)) {
-    return '0';
-  }
-
-  if (numVolume >= 1e9) {
-    return `${(numVolume / 1e9).toFixed(2)}B`;
-  }
-  if (numVolume >= 1e6) {
-    return `${(numVolume / 1e6).toFixed(2)}M`;
-  }
-  if (numVolume >= 1e3) {
-    return `${(numVolume / 1e3).toFixed(2)}K`;
-  }
-
-  return numVolume.toFixed(2);
-}
-
 export function formatTime(timestamp: number): string {
   const date = new Date(timestamp);
   return date.toLocaleTimeString('en-US', {
