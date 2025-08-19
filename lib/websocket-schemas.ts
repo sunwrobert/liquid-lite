@@ -140,7 +140,6 @@ export const WsActiveAssetCtxSchema = z.object({
   data: z.union([WsActiveAssetCtxDataSchema, WsActiveSpotAssetCtxDataSchema]),
 });
 
-// Type exports (only the ones that are actually used)
 export type Candle = z.infer<typeof CandleSchema>;
 export type L2BookData = z.infer<typeof L2BookDataSchema>;
 export type WsBook = z.infer<typeof WsBookSchema>;

@@ -31,6 +31,7 @@ type AssetSelectTableProps = {
     isSpot?: boolean;
   }>;
   searchTerm: string;
+  selectedTab: string;
 };
 
 type AssetRowProps = {
@@ -39,10 +40,12 @@ type AssetRowProps = {
     context: AssetContext | SpotAssetContext;
     isSpot?: boolean;
   };
+  showFunding: boolean;
 };
 
 const AssetRow = memo(function AssetRowBase({
   asset: assetProp,
+  showFunding,
 }: AssetRowProps) {
   const markPx = Number.parseFloat(assetProp.context.markPx || '0');
   const prevDayPx = Number.parseFloat(assetProp.context.prevDayPx || '0');
@@ -110,16 +113,18 @@ const AssetRow = memo(function AssetRowBase({
           </StatChange>
         </Text>
       </TableCell>
-      <TableCell className="h-6 p-0 align-middle">
-        <Text>
-          {funding !== null
-            ? formatNumber(funding, {
-                display: 'percent',
-                options: { maximumSignificantDigits: 3 },
-              })
-            : '—'}
-        </Text>
-      </TableCell>
+      {showFunding && (
+        <TableCell className="h-6 p-0 align-middle">
+          <Text>
+            {funding !== null
+              ? formatNumber(funding, {
+                  display: 'percent',
+                  options: { maximumSignificantDigits: 3 },
+                })
+              : '—'}
+          </Text>
+        </TableCell>
+      )}
       <TableCell className="h-6 p-0 align-middle">
         <Text>
           {formatNumber(volume, {
@@ -127,13 +132,15 @@ const AssetRow = memo(function AssetRowBase({
           })}
         </Text>
       </TableCell>
-      <TableCell className="h-6 p-0 align-middle">
-        <Text>
-          {openInterest > 0
-            ? formatNumber(openInterest, { display: 'usd' })
-            : '—'}
-        </Text>
-      </TableCell>
+      {showFunding && (
+        <TableCell className="h-6 p-0 align-middle">
+          <Text>
+            {openInterest > 0
+              ? formatNumber(openInterest, { display: 'usd' })
+              : '—'}
+          </Text>
+        </TableCell>
+      )}
     </TableRow>
   );
 });
@@ -141,6 +148,7 @@ const AssetRow = memo(function AssetRowBase({
 export function AssetSelectTable({
   assets,
   searchTerm,
+  selectedTab,
 }: AssetSelectTableProps) {
   // Filter assets based on search term - memoized for performance
   const filteredAssets = useMemo(
@@ -151,22 +159,29 @@ export function AssetSelectTable({
     [assets, searchTerm]
   );
 
+  // Hide funding column for spot-only tabs
+  const showFunding = selectedTab !== 'spot';
+
   return (
     <div className="scrollbar-hidden max-h-[400px] overflow-y-auto">
       <Table>
         <TableHeader className="h-9 items-end">
           <TableRow className="border-0">
-            <TableHead>Symbol</TableHead>
+            <TableHead className="w-[170px]">Symbol</TableHead>
             <TableHead>Last Price</TableHead>
             <TableHead>24h Change</TableHead>
-            <TableHead>8hr Funding</TableHead>
+            {showFunding && <TableHead>8hr Funding</TableHead>}
             <TableHead>Volume</TableHead>
-            <TableHead>Open Interest</TableHead>
+            {showFunding && <TableHead>Open Interest</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
           {filteredAssets.map((asset) => (
-            <AssetRow asset={asset} key={asset.universe.name} />
+            <AssetRow
+              asset={asset}
+              key={asset.universe.name}
+              showFunding={showFunding}
+            />
           ))}
         </TableBody>
       </Table>

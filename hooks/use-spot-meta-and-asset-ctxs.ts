@@ -50,7 +50,6 @@ export function useSpotMetaAndAssetCtxs({
 }: UseSpotMetaAndAssetCtxsOptions = {}) {
   const queryClient = useQueryClient();
 
-  // Set up WebSocket subscription for active asset real-time updates
   useActiveAssetCtxSubscription({
     coin: asset || '',
     pause: !asset,

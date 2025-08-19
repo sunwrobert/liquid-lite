@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   Select,
   SelectContent,
@@ -64,71 +64,51 @@ export function LiveOrderBook() {
     coin: asset,
   });
 
+  const processLevels = useCallback(
+    (levels: NonNullable<typeof rawOrderBook>['levels'][number]) => {
+      const processed: OrderBookLevel[] = [];
+      let totalUsd = 0;
+      let totalAsset = 0;
+
+      for (const level of levels) {
+        if (level?.px && level.sz) {
+          const price = Number.parseFloat(level.px);
+          const sizeAsset = Number.parseFloat(level.sz);
+          const sizeUsd = price * sizeAsset;
+
+          totalUsd += sizeUsd;
+          totalAsset += sizeAsset;
+
+          processed.push({
+            price,
+            sizeUsd,
+            totalUsd,
+            sizeAsset,
+            totalAsset,
+          });
+        }
+      }
+
+      return { levels: processed.slice(0, 11), totalUsd, totalAsset };
+    },
+    []
+  );
+
   const orderBook = useMemo(() => {
     if (!rawOrderBook?.levels || rawOrderBook.levels.length < 2) {
       return { asks: [], bids: [], maxTotalUsd: 0 };
     }
 
     const [bidLevels, askLevels] = rawOrderBook.levels;
-    const asks: OrderBookLevel[] = [];
-    const bids: OrderBookLevel[] = [];
-    let askTotalUsd = 0;
-    let bidTotalUsd = 0;
-    let askTotalAsset = 0;
-    let bidTotalAsset = 0;
-
-    // Process asks (sell orders) - sort by price ascending (lowest to highest) since we reverse the display
-    const sortedAsks = [...askLevels].sort(
-      (a, b) => Number.parseFloat(a.px) - Number.parseFloat(b.px)
-    );
-    for (const level of sortedAsks) {
-      if (level?.px && level.sz) {
-        const price = Number.parseFloat(level.px);
-        const sizeAsset = Number.parseFloat(level.sz);
-        const sizeUsd = price * sizeAsset;
-
-        askTotalUsd += sizeUsd;
-        askTotalAsset += sizeAsset;
-
-        asks.push({
-          price,
-          sizeUsd,
-          totalUsd: askTotalUsd,
-          sizeAsset,
-          totalAsset: askTotalAsset,
-        });
-      }
-    }
-
-    // Process bids (buy orders) - sort by price descending (highest to lowest)
-    const sortedBids = [...bidLevels].sort(
-      (a, b) => Number.parseFloat(b.px) - Number.parseFloat(a.px)
-    );
-    for (const level of sortedBids) {
-      if (level?.px && level.sz) {
-        const price = Number.parseFloat(level.px);
-        const sizeAsset = Number.parseFloat(level.sz);
-        const sizeUsd = price * sizeAsset;
-
-        bidTotalUsd += sizeUsd;
-        bidTotalAsset += sizeAsset;
-
-        bids.push({
-          price,
-          sizeUsd,
-          totalUsd: bidTotalUsd,
-          sizeAsset,
-          totalAsset: bidTotalAsset,
-        });
-      }
-    }
+    const { levels: asks, totalUsd: askTotalUsd } = processLevels(askLevels);
+    const { levels: bids, totalUsd: bidTotalUsd } = processLevels(bidLevels);
 
     return {
-      asks: asks.slice(0, 11),
-      bids: bids.slice(0, 11),
+      asks,
+      bids,
       maxTotalUsd: Math.max(askTotalUsd, bidTotalUsd),
     };
-  }, [rawOrderBook]);
+  }, [rawOrderBook, processLevels]);
 
   const spread = useMemo(() => {
     if (orderBook.asks.length > 0 && orderBook.bids.length > 0) {
@@ -147,6 +127,28 @@ export function LiveOrderBook() {
     }
     return 0;
   }, [spread, orderBook.bids]);
+
+  const getDisplayValues = (level: OrderBookLevel) => {
+    const displaySize = displayMode === 'usd' ? level.sizeUsd : level.sizeAsset;
+    const displayTotal =
+      displayMode === 'usd' ? level.totalUsd : level.totalAsset;
+    return { displaySize, displayTotal };
+  };
+
+  const maxSize = useMemo(() => {
+    return Math.max(
+      ...orderBook.asks.map((a) =>
+        displayMode === 'usd' ? a.sizeUsd : a.sizeAsset
+      ),
+      ...orderBook.bids.map((b) =>
+        displayMode === 'usd' ? b.sizeUsd : b.sizeAsset
+      )
+    );
+  }, [orderBook.asks, orderBook.bids, displayMode]);
+
+  const getFillPercentage = (displaySize: number) => {
+    return maxSize > 0 ? (displaySize / maxSize) * 100 : 0;
+  };
 
   return (
     <div className="flex h-full flex-col">
@@ -205,22 +207,8 @@ export function LiveOrderBook() {
               .slice()
               .reverse()
               .map((ask, index) => {
-                const displaySize =
-                  displayMode === 'usd' ? ask.sizeUsd : ask.sizeAsset;
-                const displayTotal =
-                  displayMode === 'usd' ? ask.totalUsd : ask.totalAsset;
-
-                // Calculate max size for proper percentage scaling
-                const maxSize = Math.max(
-                  ...orderBook.asks.map((a) =>
-                    displayMode === 'usd' ? a.sizeUsd : a.sizeAsset
-                  ),
-                  ...orderBook.bids.map((b) =>
-                    displayMode === 'usd' ? b.sizeUsd : b.sizeAsset
-                  )
-                );
-                const fillPercentage =
-                  maxSize > 0 ? (displaySize / maxSize) * 100 : 0;
+                const { displaySize, displayTotal } = getDisplayValues(ask);
+                const fillPercentage = getFillPercentage(displaySize);
 
                 return (
                   <TableRow
@@ -257,20 +245,8 @@ export function LiveOrderBook() {
 
             {/* Bids */}
             {orderBook.bids.map((bid, index) => {
-              const displaySize =
-                displayMode === 'usd' ? bid.sizeUsd : bid.sizeAsset;
-              const displayTotal =
-                displayMode === 'usd' ? bid.totalUsd : bid.totalAsset;
-              const maxSize = Math.max(
-                ...orderBook.asks.map((a) =>
-                  displayMode === 'usd' ? a.sizeUsd : a.sizeAsset
-                ),
-                ...orderBook.bids.map((b) =>
-                  displayMode === 'usd' ? b.sizeUsd : b.sizeAsset
-                )
-              );
-              const fillPercentage =
-                maxSize > 0 ? (displaySize / maxSize) * 100 : 0;
+              const { displaySize, displayTotal } = getDisplayValues(bid);
+              const fillPercentage = getFillPercentage(displaySize);
 
               return (
                 <TableRow

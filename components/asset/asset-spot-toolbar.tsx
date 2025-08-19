@@ -1,33 +1,15 @@
 'use client';
 
-import { Stat, StatLabel, StatValue } from '@/components/ui/stat';
+import { AssetSelector } from '@/components/asset/asset-selector/asset-selector';
+import { AssetSpotStats } from '@/components/asset/asset-spot-stats';
+import { useTradeContext } from '@/providers/trade-provider';
 
 export function AssetSpotToolbar() {
-  // TODO: Implement with spot market data hook when available
-  // For now, show placeholder stats relevant to spot trading
-
+  const { asset } = useTradeContext();
   return (
     <div className="flex shrink-0 items-center gap-8">
-      <Stat>
-        <StatLabel>Price</StatLabel>
-        <StatValue>--</StatValue>
-      </Stat>
-      <Stat>
-        <StatLabel>24h Change</StatLabel>
-        <StatValue>--</StatValue>
-      </Stat>
-      <Stat>
-        <StatLabel>24h Volume</StatLabel>
-        <StatValue>--</StatValue>
-      </Stat>
-      <Stat>
-        <StatLabel>Market Cap</StatLabel>
-        <StatValue>--</StatValue>
-      </Stat>
-      <Stat>
-        <StatLabel>Circulating Supply</StatLabel>
-        <StatValue>--</StatValue>
-      </Stat>
+      <AssetSelector selectedAsset={asset} />
+      <AssetSpotStats asset={asset} />
     </div>
   );
 }
