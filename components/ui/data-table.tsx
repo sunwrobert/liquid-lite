@@ -29,6 +29,7 @@ type DataTableProps<TData, TValue> = {
   estimatedRowHeight?: number;
   className?: string;
   onRowClick?: (row: TData) => void;
+  onRowHover?: (row: TData) => void;
 };
 
 function SortableHeader({
@@ -83,6 +84,7 @@ export function DataTable<TData, TValue>({
   estimatedRowHeight = 32,
   className,
   onRowClick,
+  onRowHover,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -166,6 +168,7 @@ export function DataTable<TData, TValue>({
                       data-index={virtualItem.index}
                       key={row.id}
                       onClick={() => onRowClick?.(row.original)}
+                      onMouseEnter={() => onRowHover?.(row.original)}
                       style={{
                         height: `${virtualItem.size}px`,
                         transform: `translateY(${virtualItem.start}px)`,
@@ -232,6 +235,7 @@ export function DataTable<TData, TValue>({
                 data-state={row.getIsSelected() && 'selected'}
                 key={row.id}
                 onClick={() => onRowClick?.(row.original)}
+                onMouseEnter={() => onRowHover?.(row.original)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <div

@@ -228,6 +228,9 @@ export function AssetSelectTable({
       onRowClick={(row) => {
         router.push(`/trade/${row.universe.name}`);
       }}
+      onRowHover={(row) => {
+        router.prefetch(`/trade/${row.universe.name}`);
+      }}
     />
   );
 }
