@@ -4,6 +4,7 @@ import {
   type SpotMetaAndAssetCtxsResponse,
   SpotMetaAndAssetCtxsResponseSchema,
 } from './schemas';
+import { type WsBook, WsBookSchema } from './websocket-schemas';
 
 const API_BASE_URL = 'https://api.hyperliquid.xyz';
 
@@ -93,6 +94,13 @@ export type TokenDetailsRequest = {
   tokenId: string;
 };
 
+export type L2BookRequest = {
+  type: 'l2Book';
+  coin: string;
+  nSigFigs?: number;
+  mantissa?: number;
+};
+
 export type ApiRequest =
   | PerpDexsRequest
   | MetaRequest
@@ -109,7 +117,8 @@ export type ApiRequest =
   | SpotMetaAndAssetCtxsRequest
   | SpotClearinghouseStateRequest
   | SpotDeployStateRequest
-  | TokenDetailsRequest;
+  | TokenDetailsRequest
+  | L2BookRequest;
 
 // API Response type (generic since response varies by request type)
 export type ApiResponse<T = unknown> = T;
@@ -229,4 +238,13 @@ export function getSpotDeployState(user: string): Promise<ApiResponse> {
 
 export function getTokenDetails(tokenId: string): Promise<ApiResponse> {
   return apiRequest({ type: 'tokenDetails', tokenId });
+}
+
+export async function getL2Book(
+  coin: string,
+  nSigFigs?: number,
+  mantissa?: number
+): Promise<WsBook> {
+  const data = await apiRequest({ type: 'l2Book', coin, nSigFigs, mantissa });
+  return WsBookSchema.parse(data);
 }

@@ -36,6 +36,7 @@ paths:
                 - $ref: '#/components/schemas/SpotClearinghouseStateRequest'
                 - $ref: '#/components/schemas/SpotDeployStateRequest'
                 - $ref: '#/components/schemas/TokenDetailsRequest'
+                - $ref: '#/components/schemas/L2BookRequest'
       responses:
         '200':
           description: Successful response with requested data
@@ -273,3 +274,25 @@ components:
       required:
         - type
         - tokenId
+
+    L2BookRequest:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [l2Book]
+        coin:
+          type: string
+          description: Coin symbol, eg "ETH"
+        nSigFigs:
+          type: integer
+          minimum: 2
+          maximum: 5
+          description: Aggregates levels to specified significant figures (2-5)
+        mantissa:
+          type: integer
+          enum: [1, 2, 5]
+          description: Only allowed if nSigFigs is 5
+      required:
+        - type
+        - coin
