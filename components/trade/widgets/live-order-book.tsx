@@ -151,7 +151,7 @@ export function LiveOrderBook() {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <div className="flex h-8 items-center justify-between px-1">
+      <div className="flex items-center justify-between px-1">
         {/* Price Increment Selector */}
         <Select
           onValueChange={(value) =>
@@ -227,12 +227,12 @@ export function LiveOrderBook() {
                     className="relative hover:bg-muted/10"
                     key={`ask-${ask.price}-${index}`}
                   >
-                    <div
-                      className="absolute inset-y-0 left-0 bg-error/20"
-                      style={{ width: `${fillPercentage}%` }}
-                    />
                     <TableCell className="relative text-error">
                       {formatPrice(ask.price)}
+                      <div
+                        className="absolute inset-y-0 left-0 bg-error/20"
+                        style={{ width: `${fillPercentage}%` }}
+                      />
                     </TableCell>
                     <TableCell className="relative justify-end text-right">
                       {formatNumber(displaySize, { display: 'standard' })}
@@ -277,12 +277,13 @@ export function LiveOrderBook() {
                   className="relative hover:bg-muted/10"
                   key={`bid-${bid.price}-${index}`}
                 >
-                  <div
-                    className="absolute inset-y-0 left-0 bg-success/20"
-                    style={{ width: `${fillPercentage}%` }}
-                  />
                   <TableCell className="relative text-success">
                     {formatPrice(bid.price)}
+
+                    <div
+                      className="absolute inset-y-0 left-0 bg-success/20"
+                      style={{ width: `${fillPercentage}%` }}
+                    />
                   </TableCell>
                   <TableCell className="relative justify-end text-right">
                     {formatNumber(displaySize, { display: 'standard' })}

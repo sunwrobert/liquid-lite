@@ -54,7 +54,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       className={cn(
-        'flex-1 whitespace-nowrap font-medium text-muted-foreground text-xs first:pl-2.5 last:pr-2.5',
+        'flex-1 whitespace-nowrap font-medium text-muted-foreground text-xs [&:first-child]:pl-2.5 [&:last-child]:pr-2.5',
         className
       )}
       data-slot="table-head"
@@ -68,7 +68,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'div'>) {
   return (
     <div
       className={cn(
-        'flex h-6 flex-1 items-center whitespace-nowrap text-xs first:pl-2.5 last:pr-2.5',
+        'flex h-6 flex-1 items-center whitespace-nowrap text-xs [&:first-child]:pl-2.5 [&:last-child]:pr-2.5',
         className
       )}
       data-slot="table-cell"

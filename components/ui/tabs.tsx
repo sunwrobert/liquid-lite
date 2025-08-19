@@ -25,10 +25,7 @@ function TabsList({
 }: React.ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
-      className={cn(
-        'inline-flex h-6 w-fit items-center justify-center',
-        className
-      )}
+      className={cn('inline-flex w-fit items-center justify-center', className)}
       data-slot="tabs-list"
       {...props}
     />

@@ -48,32 +48,24 @@ export function TradePageContent() {
           <Tabs className="flex h-full flex-col gap-0" defaultValue="orderbook">
             <div className="flex">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="orderbook">Order Book</TabsTrigger>
-                <TabsTrigger value="trades">Trades</TabsTrigger>
+                <TabsTrigger className="h-9" value="orderbook">
+                  Order Book
+                </TabsTrigger>
+                <TabsTrigger className="h-9" value="trades">
+                  Trades
+                </TabsTrigger>
               </TabsList>
               <MoreVerticalIcon className="mt-2 mr-2 size-4 text-muted-foreground" />
             </div>
 
             <Separator className="-mt-[1px] mb-1" orientation="horizontal" />
 
-            <TabsContent className="flex-1" value="orderbook">
-              <Suspense
-                fallback={
-                  <div className="h-full animate-pulse rounded-lg bg-muted" />
-                }
-              >
-                <LiveOrderBook />
-              </Suspense>
+            <TabsContent className="flex-1 pt-1" value="orderbook">
+              <LiveOrderBook />
             </TabsContent>
 
-            <TabsContent className="flex-1" value="trades">
-              <Suspense
-                fallback={
-                  <div className="h-full animate-pulse rounded-lg bg-muted" />
-                }
-              >
-                <LiveTrades />
-              </Suspense>
+            <TabsContent className="flex-1 pt-1" value="trades">
+              <LiveTrades />
             </TabsContent>
           </Tabs>
         </Card>
