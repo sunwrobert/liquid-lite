@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
-import { Navbar } from '../components/layout/navbar';
-import { Providers } from '../providers/providers';
+import { Navbar } from '@/components/layout/navbar';
+import { Providers } from '@/providers/providers';
 
 const inter = Inter({
   variable: '--font-inter',

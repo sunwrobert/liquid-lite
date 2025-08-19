@@ -1,12 +1,12 @@
 'use client';
 
 import type React from 'react';
+import { Text } from '@/components/ui/text';
 import {
   type UseChangeAnimationOptions,
   useChangeAnimation,
 } from '@/hooks/use-change-animation';
 import { cn } from '@/lib/utils';
-import { Text } from './text';
 
 type ChangeAnimationProps = UseChangeAnimationOptions & {
   children: React.ReactNode;

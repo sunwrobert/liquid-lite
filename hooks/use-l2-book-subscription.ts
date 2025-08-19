@@ -1,8 +1,8 @@
 'use client';
 
+import { useSubscription } from '@/hooks/use-subscription';
 import type { WsBook } from '@/lib/websocket-schemas';
 import { SubL2BookSchema, WsBookSchema } from '@/lib/websocket-schemas';
-import { useSubscription } from './use-subscription';
 
 type UseL2BookSubscriptionOptions = {
   coin: string;

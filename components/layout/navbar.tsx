@@ -1,7 +1,7 @@
 import Link from 'next/link';
-import { Hyperliquid } from '../icons/hyperliquid';
-import { ConnectButton } from '../wallet/connect-button';
-import { NavLink } from './nav-link';
+import { Hyperliquid } from '@/components/icons/hyperliquid';
+import { NavLink } from '@/components/layout/nav-link';
+import { ConnectButton } from '@/components/wallet/connect-button';
 
 export function Navbar() {
   return (

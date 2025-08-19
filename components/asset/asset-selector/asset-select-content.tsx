@@ -2,16 +2,14 @@
 
 import { SearchIcon } from 'lucide-react';
 import { useState } from 'react';
-
+import { AssetSelectTable } from '@/components/asset/asset-selector/asset-select-table';
+import { AssetSelectTabs } from '@/components/asset/asset-selector/asset-select-tabs';
 import { Input } from '@/components/ui/input';
 import { TabsContent } from '@/components/ui/tabs';
 import { Text } from '@/components/ui/text';
 import { useMetaAndAssetCtxs } from '@/hooks/use-meta-and-asset-ctxs';
 import { useSpotMetaAndAssetCtxs } from '@/hooks/use-spot-meta-and-asset-ctxs';
 import type { AssetContext, SpotAssetContext } from '@/lib/schemas';
-
-import { AssetSelectTable } from './asset-select-table';
-import { AssetSelectTabs } from './asset-select-tabs';
 
 export function AssetSelectContent() {
   const [searchTerm, setSearchTerm] = useState('');
