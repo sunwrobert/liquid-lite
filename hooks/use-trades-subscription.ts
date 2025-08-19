@@ -12,7 +12,10 @@ type UseTradesSubscriptionOptions = {
   onError?: (error: Error) => void;
 };
 
-const TradesResponseSchema = z.array(WsTradeSchema);
+const WsTradesResponseSchema = z.object({
+  channel: z.literal('trades'),
+  data: z.array(WsTradeSchema),
+});
 
 export function useTradesSubscription({
   coin,
@@ -30,9 +33,9 @@ export function useTradesSubscription({
 
   return useSubscription({
     subscriptionMessage,
-    responseSchema: TradesResponseSchema,
+    responseSchema: WsTradesResponseSchema,
     pause,
-    onResult,
+    onResult: (wsResponse) => onResult(wsResponse.data),
     onError,
   });
 }

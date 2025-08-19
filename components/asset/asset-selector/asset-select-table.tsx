@@ -1,18 +1,12 @@
 'use client';
 
-import Link from 'next/link';
-import { memo, useMemo } from 'react';
+import type { ColumnDef } from '@tanstack/react-table';
+import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 
 import { Badge } from '@/components/ui/badge';
+import { DataTable } from '@/components/ui/data-table';
 import { StatChange } from '@/components/ui/stat-change';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Text } from '@/components/ui/text';
 import { formatNumber } from '@/lib/format';
 import type {
@@ -24,124 +18,189 @@ import type {
 
 const PERCENTAGE_MULTIPLIER = 100;
 
+type AssetData = {
+  universe: UniverseItem | SpotUniverseItem;
+  context: AssetContext | SpotAssetContext;
+  isSpot?: boolean;
+};
+
 type AssetSelectTableProps = {
-  assets: Array<{
-    universe: UniverseItem | SpotUniverseItem;
-    context: AssetContext | SpotAssetContext;
-    isSpot?: boolean;
-  }>;
+  assets: AssetData[];
   searchTerm: string;
+  selectedTab: string;
 };
 
-type AssetRowProps = {
-  asset: {
-    universe: UniverseItem | SpotUniverseItem;
-    context: AssetContext | SpotAssetContext;
-    isSpot?: boolean;
-  };
-};
-
-const AssetRow = memo(function AssetRowBase({
-  asset: assetProp,
-}: AssetRowProps) {
-  const markPx = Number.parseFloat(assetProp.context.markPx || '0');
-  const prevDayPx = Number.parseFloat(assetProp.context.prevDayPx || '0');
-  const change24h = markPx - prevDayPx;
-  const changePercent24h =
-    prevDayPx > 0 ? (change24h / prevDayPx) * PERCENTAGE_MULTIPLIER : 0;
-  const funding =
-    'funding' in assetProp.context && assetProp.context.funding
-      ? Number.parseFloat(assetProp.context.funding)
-      : null;
-  const volume = Number.parseFloat(assetProp.context.dayNtlVlm || '0');
-  const openInterest =
-    'openInterest' in assetProp.context && assetProp.context.openInterest
-      ? Number.parseFloat(assetProp.context.openInterest)
-      : 0;
-
-  return (
-    <TableRow className="h-6 border-0 transition-none hover:bg-border">
-      <TableCell className="h-6 p-0 align-middle">
-        <Link
-          className="flex cursor-pointer items-center gap-2"
-          href={`/trade/${assetProp.universe.name}`}
-        >
-          <Text className="font-medium">
-            {assetProp.isSpot
-              ? assetProp.universe.name
-              : `${assetProp.universe.name}-USD`}
-          </Text>
-          {assetProp.isSpot ? (
-            <Badge>SPOT</Badge>
-          ) : (
-            'maxLeverage' in assetProp.universe &&
-            assetProp.universe.maxLeverage && (
-              <Badge>{assetProp.universe.maxLeverage}x</Badge>
-            )
-          )}
-        </Link>
-      </TableCell>
-      <TableCell className="h-6 p-0 align-middle">
-        <Text>
-          {formatNumber(markPx, {
-            display: 'standard',
-            options: {
-              minimumSignificantDigits: 4,
-              maximumSignificantDigits: 6,
-            },
-          })}
-        </Text>
-      </TableCell>
-      <TableCell className="h-6 p-0 align-middle">
-        <Text>
-          <StatChange change={change24h}>
-            {formatNumber(change24h, {
+function createColumns(showFunding: boolean): ColumnDef<AssetData>[] {
+  const baseColumns: ColumnDef<AssetData>[] = [
+    {
+      id: 'symbol',
+      header: 'Symbol',
+      accessorFn: (row) => row.universe.name,
+      enableSorting: true,
+      cell: ({ row }) => {
+        const asset = row.original;
+        return (
+          <div className="flex items-center gap-2">
+            <Text className="font-medium">
+              {asset.isSpot
+                ? asset.universe.name
+                : `${asset.universe.name}-USD`}
+            </Text>
+            {asset.isSpot ? (
+              <Badge>SPOT</Badge>
+            ) : (
+              'maxLeverage' in asset.universe &&
+              asset.universe.maxLeverage && (
+                <Badge>{asset.universe.maxLeverage}x</Badge>
+              )
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      id: 'lastPrice',
+      header: 'Last Price',
+      accessorFn: (row) => Number.parseFloat(row.context.markPx || '0'),
+      enableSorting: true,
+      cell: ({ getValue }) => {
+        const markPx = getValue() as number;
+        return (
+          <Text>
+            {formatNumber(markPx, {
               display: 'standard',
               options: {
                 minimumSignificantDigits: 4,
-                maximumSignificantDigits: 4,
+                maximumSignificantDigits: 6,
               },
-            })}{' '}
-            /{' '}
-            {formatNumber(changePercent24h / PERCENTAGE_MULTIPLIER, {
-              display: 'percent',
-              options: { maximumFractionDigits: 2 },
             })}
-          </StatChange>
-        </Text>
-      </TableCell>
-      <TableCell className="h-6 p-0 align-middle">
-        <Text>
-          {funding !== null
-            ? formatNumber(funding, {
+          </Text>
+        );
+      },
+    },
+    {
+      id: 'change24h',
+      header: '24h Change',
+      accessorFn: (row) => {
+        const markPx = Number.parseFloat(row.context.markPx || '0');
+        const prevDayPx = Number.parseFloat(row.context.prevDayPx || '0');
+        const change24h = markPx - prevDayPx;
+        return prevDayPx > 0
+          ? (change24h / prevDayPx) * PERCENTAGE_MULTIPLIER
+          : 0;
+      },
+      enableSorting: true,
+      cell: ({ row }) => {
+        const markPx = Number.parseFloat(row.original.context.markPx || '0');
+        const prevDayPx = Number.parseFloat(
+          row.original.context.prevDayPx || '0'
+        );
+        const change24h = markPx - prevDayPx;
+        const changePercent24h =
+          prevDayPx > 0 ? (change24h / prevDayPx) * PERCENTAGE_MULTIPLIER : 0;
+
+        return (
+          <Text>
+            <StatChange change={change24h}>
+              {formatNumber(change24h, {
+                display: 'standard',
+                options: {
+                  minimumSignificantDigits: 4,
+                  maximumSignificantDigits: 4,
+                },
+              })}{' '}
+              /{' '}
+              {formatNumber(changePercent24h / PERCENTAGE_MULTIPLIER, {
                 display: 'percent',
-                options: { maximumSignificantDigits: 3 },
-              })
-            : '—'}
-        </Text>
-      </TableCell>
-      <TableCell className="h-6 p-0 align-middle">
+                options: { maximumFractionDigits: 2 },
+              })}
+            </StatChange>
+          </Text>
+        );
+      },
+    },
+  ];
+
+  if (showFunding) {
+    baseColumns.push({
+      id: 'funding',
+      header: '8hr Funding',
+      accessorFn: (row) => {
+        const funding =
+          'funding' in row.context && row.context.funding
+            ? Number.parseFloat(row.context.funding)
+            : null;
+        return funding;
+      },
+      enableSorting: true,
+      cell: ({ getValue }) => {
+        const funding = getValue() as number | null;
+        return (
+          <Text>
+            {funding !== null
+              ? formatNumber(funding, {
+                  display: 'percent',
+                  options: { maximumSignificantDigits: 3 },
+                })
+              : '—'}
+          </Text>
+        );
+      },
+    });
+  }
+
+  baseColumns.push({
+    id: 'volume',
+    header: 'Volume',
+    accessorFn: (row) => Number.parseFloat(row.context.dayNtlVlm || '0'),
+    enableSorting: true,
+    cell: ({ getValue }) => {
+      const volume = getValue() as number;
+      return (
         <Text>
           {formatNumber(volume, {
             display: 'usd',
           })}
         </Text>
-      </TableCell>
-      <TableCell className="h-6 p-0 align-middle">
-        <Text>
-          {openInterest > 0
-            ? formatNumber(openInterest, { display: 'usd' })
-            : '—'}
-        </Text>
-      </TableCell>
-    </TableRow>
-  );
-});
+      );
+    },
+  });
+
+  if (showFunding) {
+    baseColumns.push({
+      id: 'openInterest',
+      header: 'Open Interest',
+      accessorFn: (row) => {
+        const openInterest =
+          'openInterest' in row.context && row.context.openInterest
+            ? Number.parseFloat(row.context.openInterest)
+            : 0;
+        return openInterest;
+      },
+      enableSorting: true,
+      cell: ({ getValue }) => {
+        const openInterest = getValue() as number;
+        return (
+          <Text>
+            {openInterest > 0
+              ? formatNumber(openInterest, { display: 'usd' })
+              : '—'}
+          </Text>
+        );
+      },
+    });
+  }
+
+  return baseColumns;
+}
 
 export function AssetSelectTable({
   assets,
   searchTerm,
+  selectedTab,
 }: AssetSelectTableProps) {
+  const router = useRouter();
+
   // Filter assets based on search term - memoized for performance
   const filteredAssets = useMemo(
     () =>
@@ -151,37 +210,24 @@ export function AssetSelectTable({
     [assets, searchTerm]
   );
 
+  // Hide funding column for spot-only tabs
+  const showFunding = selectedTab !== 'spot';
+
+  // Create columns based on whether to show funding
+  const columns = useMemo(() => createColumns(showFunding), [showFunding]);
+
   return (
-    <div className="scrollbar-hidden max-h-[400px] overflow-y-auto">
-      <Table>
-        <TableHeader>
-          <TableRow className="border-0">
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">Symbol</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">Last Price</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">24h Change</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">8hr Funding</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">Volume</Text>
-            </TableHead>
-            <TableHead className="h-6 border-0 p-0 align-middle">
-              <Text className="text-muted-foreground">Open Interest</Text>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredAssets.map((asset) => (
-            <AssetRow asset={asset} key={asset.universe.name} />
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+    <DataTable
+      className="scrollbar-hidden"
+      columns={columns}
+      data={filteredAssets}
+      enableSorting={true}
+      enableVirtualization={filteredAssets.length > 50}
+      estimatedRowHeight={24}
+      height={400}
+      onRowClick={(row) => {
+        router.push(`/trade/${row.universe.name}`);
+      }}
+    />
   );
 }

@@ -108,40 +108,88 @@ export function AssetSelectContent() {
       {/* Tabs and Table */}
       <AssetSelectTabs onTabChange={setSelectedTab} selectedTab={selectedTab}>
         <TabsContent className="mt-0" value="all">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="perps">
-          <AssetSelectTable assets={perpAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={perpAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="spot">
-          <AssetSelectTable assets={spotAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={spotAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="trending">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="dex-only">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="pre-launch">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="ai">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="defi">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="gaming">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="layer1">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="layer2">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
         <TabsContent className="mt-0" value="meme">
-          <AssetSelectTable assets={allAssets} searchTerm={searchTerm} />
+          <AssetSelectTable
+            assets={allAssets}
+            searchTerm={searchTerm}
+            selectedTab={selectedTab}
+          />
         </TabsContent>
       </AssetSelectTabs>
     </div>

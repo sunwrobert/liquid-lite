@@ -10,5 +10,3 @@ IMPORTANT: You MUST immediately read ALL the following files when you see this C
 - [Code Quality Standards](.cursor/rules/ultracite.mdc) - Formatting, linting, and AI-ready code rules (READ NOW)
 - [Next.js App Router Patterns](.cursor/rules/nextjs-app-router.mdc) - Next.js 15 conventions and best practices (READ NOW)
 - [Project Structure Guidelines](.cursor/rules/project-structure.mdc) - File organization and architecture patterns (READ NOW)
-- [shadcn/ui Component Rules](.cursor/rules/shadcn-components.mdc) - Component composition and UI patterns (READ NOW)
-- [Tailwind CSS v4 Guidelines](.cursor/rules/tailwind-v4.mdc) - Modern styling and design system integration (READ NOW)

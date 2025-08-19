@@ -41,7 +41,6 @@ export function useMetaAndAssetCtxs({
 }: UseMetaAndAssetCtxsOptions = {}) {
   const queryClient = useQueryClient();
 
-  // Set up WebSocket subscription for active asset real-time updates
   useActiveAssetCtxSubscription({
     coin: asset || '',
     pause: !asset,
@@ -80,13 +79,11 @@ export function useMetaAndAssetCtxs({
       const rawData = await getMetaAndAssetCtxs();
       const [meta, assetCtxs] = rawData;
 
-      // Create combined data with universe items and their corresponding asset contexts
       const combinedAssetData = meta.universe.map((universeItem, index) => ({
         ...assetCtxs[index],
         universeItem,
       }));
 
-      // Transform into object keyed by lowercase name
       const assets = keyBy(combinedAssetData, (item) =>
         item.universeItem.name.toLowerCase()
       );

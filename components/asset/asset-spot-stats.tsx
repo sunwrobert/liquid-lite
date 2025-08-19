@@ -1,20 +1,21 @@
 'use client';
 
+import { SquareArrowOutUpRight } from 'lucide-react';
 import { ChangeAnimation } from '@/components/ui/change-animation';
-import { Countdown } from '@/components/ui/countdown';
 import { Stat, StatLabel, StatValue } from '@/components/ui/stat';
 import { StatChange } from '@/components/ui/stat-change';
-import { useMetaAndAssetCtxs } from '@/hooks/use-meta-and-asset-ctxs';
+import { useSpotMetaAndAssetCtxs } from '@/hooks/use-spot-meta-and-asset-ctxs';
+import { formatAddress } from '@/lib/address';
 import { formatNumber } from '@/lib/format';
 
-type AssetPerpsStatsProps = {
+type AssetSpotStatsProps = {
   asset: string;
 };
 
 const PERCENTAGE_MULTIPLIER = 100;
 
-export function AssetPerpsStats({ asset }: AssetPerpsStatsProps) {
-  const { data, isLoading, error } = useMetaAndAssetCtxs({
+export function AssetSpotStats({ asset }: AssetSpotStatsProps) {
+  const { data, isLoading, error } = useSpotMetaAndAssetCtxs({
     asset,
   });
 
@@ -31,8 +32,11 @@ export function AssetPerpsStats({ asset }: AssetPerpsStatsProps) {
     );
   }
 
+  // For spot, try both the direct asset key and asset/usdc format
   const assetKey = asset.toLowerCase();
-  const assetCtx = data.assets[assetKey];
+  const spotAssetKey = asset.includes('/') ? assetKey : `${assetKey}/usdc`;
+
+  const assetCtx = data.assets[spotAssetKey] || data.assets[assetKey];
 
   if (!assetCtx) {
     return (
@@ -49,18 +53,25 @@ export function AssetPerpsStats({ asset }: AssetPerpsStatsProps) {
   const change24h = markPx - prevDayPx;
   const changePercent24h = (change24h / prevDayPx) * PERCENTAGE_MULTIPLIER;
 
-  // Format funding rate as percentage
-  const fundingRate = Number.parseFloat(assetCtx.funding);
+  // Calculate market cap using circulatingSupply from spot data
+  const circulatingSupply = assetCtx.circulatingSupply
+    ? Number.parseFloat(assetCtx.circulatingSupply)
+    : null;
+  const marketCap = circulatingSupply ? markPx * circulatingSupply : null;
 
-  // Calculate next hour for funding countdown
-  const now = new Date();
-  const nextHour = new Date(now);
-  nextHour.setHours(now.getHours() + 1, 0, 0, 0);
+  // Get contract address from tokens data
+  const baseAsset = asset.split('/')[0]?.toLowerCase() || asset.toLowerCase();
+  const contractToken = data.tokens?.find(
+    (token) =>
+      token.name.toLowerCase() === baseAsset ||
+      token.fullName?.toLowerCase().includes(baseAsset)
+  );
+  const contractAddress = contractToken?.tokenId || null;
 
   return (
     <>
       <Stat>
-        <StatLabel>Mark</StatLabel>
+        <StatLabel>Price</StatLabel>
         <StatValue>
           <ChangeAnimation value={markPx}>
             {formatNumber(markPx, {
@@ -71,14 +82,6 @@ export function AssetPerpsStats({ asset }: AssetPerpsStatsProps) {
               },
             })}
           </ChangeAnimation>
-        </StatValue>
-      </Stat>
-      <Stat>
-        <StatLabel>Oracle</StatLabel>
-        <StatValue>
-          {formatNumber(Number.parseFloat(assetCtx.oraclePx), {
-            display: 'standard',
-          })}
         </StatValue>
       </Stat>
       <Stat>
@@ -108,25 +111,31 @@ export function AssetPerpsStats({ asset }: AssetPerpsStatsProps) {
         </StatValue>
       </Stat>
       <Stat>
-        <StatLabel>Open Interest</StatLabel>
+        <StatLabel>Market Cap</StatLabel>
         <StatValue>
-          {formatNumber(Number.parseFloat(assetCtx.openInterest), {
-            display: 'usd',
-          })}
+          {marketCap !== null
+            ? formatNumber(marketCap, {
+                display: 'usd',
+              })
+            : '--'}
         </StatValue>
       </Stat>
       <Stat>
-        <StatLabel>Funding / Countdown</StatLabel>
-        <StatValue className="flex items-center gap-2">
-          <StatChange change={fundingRate} contrast>
-            {formatNumber(fundingRate, {
-              display: 'percent',
-              options: {
-                maximumSignificantDigits: 2,
-              },
-            })}
-          </StatChange>
-          <Countdown target={nextHour} />
+        <StatLabel>Contract</StatLabel>
+        <StatValue>
+          {contractAddress ? (
+            <div className="flex items-center gap-1">
+              <span className="text-xs">{formatAddress(contractAddress)}</span>
+              <a
+                className="text-primary hover:underline"
+                href={`https://app.hyperliquid.xyz/explorer/token/${contractAddress}`}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                <SquareArrowOutUpRight size={12} />
+              </a>
+            </div>
+          ) : null}
         </StatValue>
       </Stat>
     </>

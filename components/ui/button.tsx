@@ -5,7 +5,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = tv({
-  base: "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-xs outline-none transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  base: "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-xs outline-none transition-all disabled:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   variants: {
     variant: {
       default:
@@ -13,8 +13,7 @@ const buttonVariants = tv({
       error: 'bg-error text-white shadow-xs hover:bg-error/90',
       secondary:
         'border bg-card text-card-foreground shadow-xs outline-border hover:bg-card/80',
-      ghost:
-        'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
+      ghost: 'text-muted-foreground hover:text-foreground',
     },
     size: {
       sm: 'h-8 rounded-lg px-4 has-[>svg]:px-3',
@@ -25,6 +24,18 @@ const buttonVariants = tv({
     variant: 'default',
     size: 'sm',
   },
+  compoundVariants: [
+    {
+      variant: 'secondary',
+      size: 'sm',
+      className: 'px-2',
+    },
+    {
+      variant: 'ghost',
+      size: 'sm',
+      className: 'p-1',
+    },
+  ],
 });
 
 function Button({
@@ -48,4 +59,4 @@ function Button({
   );
 }
 
-export { Button, buttonVariants };
+export { Button };

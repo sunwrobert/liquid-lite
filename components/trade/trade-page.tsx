@@ -2,33 +2,33 @@
 
 import { useEffect } from 'react';
 import { setCookie } from 'react-use-cookie';
-import { AssetPerpsToolbar } from '@/components/asset/asset-perps-toolbar';
-import { AssetSpotToolbar } from '@/components/asset/asset-spot-toolbar';
-import { AssetToolbar } from '@/components/asset/asset-toolbar';
+import type { CandleInterval, TradingType } from '@/lib/cookies/trade';
 import { TradeProvider } from '@/providers/trade-provider';
-
-type TradingType = 'perps' | 'spot';
+import { TradePageContent } from './trade-page-content';
 
 type TradePageProps = {
   asset: string;
   tradingType: TradingType;
+  initialInterval: CandleInterval;
 };
 
-export function TradePage({ asset, tradingType }: TradePageProps) {
+export function TradePage({
+  asset,
+  tradingType,
+  initialInterval,
+}: TradePageProps) {
   // Set cookie when component mounts
   useEffect(() => {
     setCookie('trade-preferences', JSON.stringify({ asset, tradingType }));
   }, [asset, tradingType]);
 
   return (
-    <TradeProvider asset={asset} tradingType={tradingType}>
-      <AssetToolbar>
-        {tradingType === 'perps' ? (
-          <AssetPerpsToolbar asset={asset} />
-        ) : (
-          <AssetSpotToolbar asset={asset} />
-        )}
-      </AssetToolbar>
+    <TradeProvider
+      asset={asset}
+      initialInterval={initialInterval}
+      tradingType={tradingType}
+    >
+      <TradePageContent />
     </TradeProvider>
   );
 }

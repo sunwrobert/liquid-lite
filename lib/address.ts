@@ -1,4 +1,4 @@
-export type AddressDisplay = 'standard' | 'compact';
+type AddressDisplay = 'standard' | 'compact';
 
 const COMPACT_ADDRESS_LENGTH = 6;
 

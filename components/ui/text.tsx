@@ -41,4 +41,4 @@ function Text({
   );
 }
 
-export { Text, textVariants };
+export { Text };
