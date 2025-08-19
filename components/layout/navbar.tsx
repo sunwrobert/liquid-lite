@@ -12,11 +12,6 @@ export function Navbar() {
         </Link>
         <div className="flex items-center gap-4.5 text-xs">
           <NavLink href="/trade">Trade</NavLink>
-          <NavLink href="/vaults">Vaults</NavLink>
-          <NavLink href="/portfolio">Portfolio</NavLink>
-          <NavLink href="/staking">Staking</NavLink>
-          <NavLink href="/referrals">Referrals</NavLink>
-          <NavLink href="/leaderboard">Leaderboard</NavLink>
         </div>
       </div>
       <ConnectButton />

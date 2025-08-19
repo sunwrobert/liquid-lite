@@ -144,6 +144,11 @@ export function TradingChart() {
     }));
 
     seriesRef.current.setData(chartData);
+
+    // Ensure optimal zoom after data is loaded
+    if (chartRef.current) {
+      chartRef.current.timeScale().fitContent();
+    }
   }, [candles]);
 
   return (
