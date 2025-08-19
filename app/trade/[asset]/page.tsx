@@ -6,22 +6,23 @@ type AssetPerpsPageProps = {
   params: { asset: string };
 };
 
-// biome-ignore lint/suspicious/useAwait: this is fine
 export async function generateMetadata({
   params,
 }: AssetPerpsPageProps): Promise<Metadata> {
-  return {
-    title: `${params.asset.toUpperCase()} Perpetuals - Trade`,
-    description: `Trade ${params.asset.toUpperCase()} perpetual futures`,
+  const { asset } = await params;
+  return await {
+    title: `${asset.toUpperCase()} Perpetuals - Trade`,
+    description: `Trade ${asset.toUpperCase()} perpetual futures`,
   };
 }
 
 export default async function AssetPerpsPage({ params }: AssetPerpsPageProps) {
+  const { asset } = await params;
   const initialInterval = await getChartInterval();
 
   return (
     <TradePage
-      asset={params.asset}
+      asset={asset}
       initialInterval={initialInterval}
       tradingType="perps"
     />
